@@ -1,0 +1,190 @@
+%
+% Exemplo LaTeX de artigo UNISINOS
+%
+% Elaborado com base nas orientações dadas no documento
+% ``GUIA PARA ELABORAÇÃO DE TRABALHOS ACADÊMICOS''
+% disponível no site da biblioteca da Unisinos.
+% http://www.unisinos.br/biblioteca
+% 
+% Os elementos textuais abaixo são apresentados na ordem em que devem
+% aparecer no documento.  Repare que nem todos são obrigatórios - isso
+% é devidamente indicado em cada caso.
+%
+% Comentários abaixo colocados entre aspas (`` '') foram
+% extraídos diretamente do documento da biblioteca.
+%
+% Este documento é de domínio público.
+%
+
+%=======================================================================
+% Declarações iniciais identificando a classe de documento e
+% selecionando alguns pacotes adicionais.
+%
+% As opções disponíveis (separe-as com vírgulas, sem espaço) são:
+% - twoside: Formata o documento para impressão frente-e-verso
+%   (o default é somente-frente)
+% - english,brazilian,french,german,etc.: idiomas usados no documento.
+%   Deve ser colocado por último o idioma principal.
+%=======================================================================
+\documentclass[english,brazilian]{article_unisinos} %twoside
+\usepackage[utf8]{inputenc} % charset do texto (utf8, latin1, etc.)
+\usepackage[T1]{fontenc} % encoding da fonte (afeta a sep. de sílabas)
+\usepackage{graphicx} % comandos para gráficos e inclusão de figuras
+\usepackage{bibentry} % para inserir refs. bib. no meio do texto
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{newfloat}
+\usepackage{setspace}
+%\usepackage{longtable}
+
+\DeclareFloatingEnvironment[
+fileext=loq,
+listname={Lista de Quadros},
+name=Quadro,
+%placement=p,
+%within=section,
+%chapterlistsgaps=off
+]{quadro}
+
+\newcolumntype{L}{>{\centering\arraybackslash}m{6.2cm}}
+\newcolumntype{G}{>{\centering\arraybackslash}m{5.5cm}}
+\newcolumntype{A}{>{\centering\arraybackslash}m{2.4cm}}
+\newcolumntype{B}{>{\centering\arraybackslash}m{7.5cm}}
+%=======================================================================
+% Escolha do sistema para geração de referências bibliográficas.
+%
+% O default é usar o estilo unisinos.bst.  Comente a definição abaixo
+% e descomente a linha seguinte para usar o estilo do ABNTeX (é
+% necessário ter esse pacote instalado).
+%
+% A vantagem do unisinos.bst é que ele permite o uso de um arquivo .bib
+% seguindo as orientações tradicionais do BibTeX (veja essas orientações
+% em http://ctan.tug.org/tex-archive/biblio/bibtex/contrib/doc/btxdoc.pdf).
+% Entretanto, o estilo não suporta algumas citações mais exóticas como
+% apud.  Para isso, use o ABNTeX, mas esteja ciente de que muitas de
+% suas referências serão incompatíveis com os estilos tradicionais do
+% BibTeX como plain, alpha, ieeetr, entre outros.
+%=======================================================================
+\usepackage[alf]{abntex2cite}
+
+\autor{NORONHA DA SILVA}{LEANDRO}
+\titulo{PATHOVISION: AI-Powered Image Analysis for Infectious Disease Detection}
+\subtitulo{}
+\orientador[Prof. Ph.D.]{Roehrs}{Alex}
+%\coorientador[Prof.~Dr.]{Lamport}{Leslie}
+\local{São Leopoldo}
+\ano{2025}
+\unidade{Academic Unit od Undergraduate}
+\curso{Bachelor's Degree in Information Systems}
+\natureza{%
+Article presented as a partial requirement to obtain the Bachelor’s degree in Information Systems,
+from the Information Systems Course at the University of Vale do Rio dos Sinos (UNISINOS)}
+
+%=======================================================================
+% Início do documento.
+%=======================================================================
+
+\begin{document}
+\capa
+\folhaderosto
+
+% Diferentemente do normal, os comandos a seguir devem vir aqui mesmo,
+% e não antes do \begin{document} onde seria o lugar deles. 
+\tituloArtigo{PATHOVISION: AI-Powered Image Analysis for Infectious Disease Detection}{}
+\autorArtigo{Leandro Noronha da Silva\footnote{Graduando em Sistemas de Informação pela Unisinos.  Email: leandrosilva6@edu.unisinos.br}}
+\autorArtigo{Alex Roehrs\footnote{Mini-currículo do orientador. Email: usuario@unisinos.br}}
+
+%=======================================================================
+% Resumo em Português.
+%
+% A recomendação é para 150 a 250 palavras.
+%=======================================================================
+\begin{abstract}
+O resumo, no idioma de escrita do artigo deve ser um texto único e com espaçamento \textbf{simples} entre linhas. Além disso, deve conter entre 100 a 250 palavras. Aqui é o abstract.
+
+\palavraschave{Sugere-se de 3 a 5 palavras, separadas entre si por ponto final.}
+\end{abstract}
+
+\begin{otherlanguage}{english}
+\singlespacing
+\begin{abstract}
+Resumo em inglês.
+\end{abstract}
+\palavraschave{Tradução das palavras-chave.}
+\end{otherlanguage}
+
+%=======================================================================
+% Introdução
+%=======================================================================
+\section{Introdução Teste}
+
+Neste documento é apresentado um exemplo de estrutura do artigo, podendo ser alterado de acordo com a combinação entre professor e aluno durante o processo de orientação.
+
+Conforme \cite{artzi2020prediction} os registros de saúde são importantes.
+
+De acodo com \cite{sterling2019prediction} a predição...
+
+Neste trecho, segue um exemplo de referências a imagens presentes no texto, referenciando, neste caso, a Figura \ref{fig:logotipo}.
+
+\begin{figure}[ht!]
+	\caption{Ciência da Computação - Unisinos}
+	\label{fig:logotipo}
+	\centering%
+	\begin{minipage}{.9\textwidth}
+		\includegraphics[width=\textwidth]{images/ciencia-da-computacao.png}
+		\fonte{\cite{computacaoUnisinos}}
+	\end{minipage}
+\end{figure}
+
+De acordo com \cite{kumar2019traceability} blockchain para a ....
+
+
+\section{Nova seção}
+Texto da nova seção. Conforme a Figura \ref{fig:logotipo} podemos ver que tal coisa....
+
+Conforme \cite{tait2021electronic} os registros de saúde são bons para....
+
+Conforme \cite{charles2022health} o blockchain é \textbf{importante}....
+
+\subsection{Subseção}
+Texto da subseção, com exemplo de citação \cite{book}.
+
+Conforme o autor \cite{nguyen2019closing} o UX Design está evoluindo de forma consistente em 2021.
+
+Conforme \cite{febrero2021impact} a doação de órgão é tal coisa....
+
+\subsection{Subseção}
+Texto da subseção, com exemplo de citação \cite{article}.
+
+Segundo \cite{vellido2020importance} a modelagem de dados na área da medicina....
+
+De acordo com \cite{bogner2022type} o typescript...
+
+\section{Nova seção}
+Texto da subseção, com exemplo de citação \cite{inproceedings}.
+
+
+De acordo com \cite{saiedian2000requirements} .....
+
+\section{Conclusões e Trabalhos Futuros}
+
+Gostei da opinião do \cite{biswas2023role}, por que....
+
+\bibliography{exemplo}
+
+\appendix
+\section{NOME DO APÊNDICE}
+
+Conteúdo do Apêndice. Não esqueça de referenciar os apêndices no corpo do texto.
+
+Os apêndices são elementos opcionais e não contam para os números mínimo e máximo de páginas do regulamento do TCC da Unisinos (mínimo 25 e máximo 30).
+
+\annex
+\section{NOME DO ANEXO}
+Conteúdo do Apêndice. Não esqueça de referenciar os anexos no corpo do texto.
+
+Os anexos são elementos opcionais e não contam para os números mínimo e máximo de páginas do regulamento do TCC da Unisinos (mínimo 25 e máximo 30).
+
+\end{document}
