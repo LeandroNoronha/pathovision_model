@@ -510,4 +510,5 @@
 	\def\annexname{Annex}
 	\def\palavraschavename{Keywords}
 	\def\fontename{Source}
+        \def\orientadorname{Advisor}
 }

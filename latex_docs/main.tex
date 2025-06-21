@@ -26,7 +26,7 @@
 % - english,brazilian,french,german,etc.: idiomas usados no documento.
 %   Deve ser colocado por último o idioma principal.
 %=======================================================================
-\documentclass[english,brazilian]{article_unisinos} %twoside
+\documentclass[english]{UNISINOSartigo} %twoside
 \usepackage[utf8]{inputenc} % charset do texto (utf8, latin1, etc.)
 \usepackage[T1]{fontenc} % encoding da fonte (afeta a sep. de sílabas)
 \usepackage{graphicx} % comandos para gráficos e inclusão de figuras
@@ -68,15 +68,19 @@ name=Quadro,
 % BibTeX como plain, alpha, ieeetr, entre outros.
 %=======================================================================
 \usepackage[alf]{abntex2cite}
-
 \autor{NORONHA DA SILVA}{LEANDRO}
-\titulo{PATHOVISION: AI-Powered Image Analysis for Infectious Disease Detection}
-\subtitulo{}
+%=======================================================================
+%\titulo{PATHOVISION: AI-Based Differential Diagnosis of Fungal and Inflammatory Skin Diseases}
+%\subtitulo{}
+%=======================================================================
+ \titulo{PATHOVISION: AI-Powered Analysis of Human Skin Images}
+ \subtitulo{A solution to differentiate diagnoses of fungal and inflammatory skin diseases}
+%=======================================================================
 \orientador[Prof. Ph.D.]{Roehrs}{Alex}
 %\coorientador[Prof.~Dr.]{Lamport}{Leslie}
 \local{São Leopoldo}
 \ano{2025}
-\unidade{Academic Unit od Undergraduate}
+\unidade{Academic Unit of Undergraduate}
 \curso{Bachelor's Degree in Information Systems}
 \natureza{%
 Article presented as a partial requirement to obtain the Bachelor’s degree in Information Systems,
@@ -87,14 +91,17 @@ from the Information Systems Course at the University of Vale do Rio dos Sinos (
 %=======================================================================
 
 \begin{document}
+\begin{otherlanguage}{english}
 \capa
 \folhaderosto
 
 % Diferentemente do normal, os comandos a seguir devem vir aqui mesmo,
 % e não antes do \begin{document} onde seria o lugar deles. 
 \tituloArtigo{PATHOVISION: AI-Powered Image Analysis for Infectious Disease Detection}{}
-\autorArtigo{Leandro Noronha da Silva\footnote{Graduando em Sistemas de Informação pela Unisinos.  Email: leandrosilva6@edu.unisinos.br}}
-\autorArtigo{Alex Roehrs\footnote{Mini-currículo do orientador. Email: usuario@unisinos.br}}
+\autorArtigo{Leandro Noronha da Silva
+\footnote{Graduating in Information Systems at Unisinos.  Email: noronhadasilva.leandro@gmail.com}}
+\autorArtigo{Alex Roehrs
+\footnote{PhD in Applied Computing at Unisinos. Email: alexr@unisinos.br}}
 
 %=======================================================================
 % Resumo em Português.
@@ -102,43 +109,178 @@ from the Information Systems Course at the University of Vale do Rio dos Sinos (
 % A recomendação é para 150 a 250 palavras.
 %=======================================================================
 \begin{abstract}
-O resumo, no idioma de escrita do artigo deve ser um texto único e com espaçamento \textbf{simples} entre linhas. Além disso, deve conter entre 100 a 250 palavras. Aqui é o abstract.
+Skin diseases such as tinea, ringworm, candidiasis, psoriasis, eczema, and atopic dermatitis often exhibit highly similar visual characteristics, making distinguishing among them particularly difficult using conventional diagnostic methods. This overlap in clinical appearance can result in uncertainty, misdiagnosis, and inappropriate treatment, especially when relying solely on visual examination without the support of advanced diagnostic technologies. Traditional diagnostic methods are heavily based on clinical experience and are subject to human error and variability. Recent advances in artificial intelligence (AI), particularly convolutional neural networks (CNNs), have demonstrated promising results in medical image analysis, offering the potential to improve diagnostic accuracy and efficiency. This article proposes developing an AI-based model capable of recognizing and differentiating fungal infections from inflammatory infections and classifying their causative agents by analyzing dermatological images. The model will be trained and validated using a public dataset comprising various skin conditions to ensure robust performance, even among diseases with visually similar symptoms. By providing a reliable and accessible diagnostic tool, this approach aims to support early detection and clinical decision-making, ultimately enhancing patient care and expanding access to specialized dermatological services.
 
-\palavraschave{Sugere-se de 3 a 5 palavras, separadas entre si por ponto final.}
 \end{abstract}
-
-\begin{otherlanguage}{english}
-\singlespacing
-\begin{abstract}
-Resumo em inglês.
-\end{abstract}
-\palavraschave{Tradução das palavras-chave.}
-\end{otherlanguage}
+\palavraschave{Healthcare. Artificial intelligence. Dermatology. Detection. Machine Learning}
 
 %=======================================================================
-% Introdução
+% Introduction
 %=======================================================================
-\section{Introdução Teste}
+\section{Introduction}
 
-Neste documento é apresentado um exemplo de estrutura do artigo, podendo ser alterado de acordo com a combinação entre professor e aluno durante o processo de orientação.
+Recent advances in artificial intelligence, particularly in the use of transfer learning and explainable AI, have shown significant promise in improving the accuracy and accessibility of skin disease diagnosis \cite{abbas2025intelligent}. This happens because the etiologic agents of these diseases, whether viral, bacterial, or fungal, can cause similar skin manifestations, requiring an accurate diagnosis not only of the disease, but also of the causative agent. This particular similarity, especially in regions with a shortage of dermatologists or limited infrastructure, can lead doctors to make inaccurate diagnoses, possibly delaying treatment and worsening the clinical condition of the patient.
 
-Conforme \cite{artzi2020prediction} os registros de saúde são importantes.
+This diagnostic challenge is not merely a clinical hurdle but a recognized global health priority. The World Health Organization (WHO) has explicitly called for the advancement of innovative and integrated strategies to combat skin-related Neglected Tropical Diseases (NTDs) and other common dermatoses that disproportionately affect vulnerable populations \cite{who2025skinNTDs}. This high-level mandate underscores the limitations of traditional diagnostic pathways and highlights the urgent need for novel technologies capable of enhancing diagnostic accuracy and expanding healthcare access.
 
-De acodo com \cite{sterling2019prediction} a predição...
+In recent years, artificial intelligence (AI), particularly through the use of convolutional neural networks (CNNs), has brought significant advancements to medicine by introducing innovative solutions for image-based diagnosis. As the adoption of these technologies continues to grow, the healthcare sector is becoming increasingly complex, with a rising number of health systems integrating AI into their practices \cite{durlach2024ai}. In the field of dermatology, such progress has enabled the development of AI models capable of identifying diseases with high precision, thereby supporting early diagnosis and more assertive clinical decision-making.
 
-Neste trecho, segue um exemplo de referências a imagens presentes no texto, referenciando, neste caso, a Figura \ref{fig:logotipo}.
+The AI application in dermatology not just promises improve the diagnostic precision, but also democratize access to specialized care to patients in regions where the presence of specialized doctors in dermatology is limited. In this new era of healthcare, an automated diagnostic system can be a valuable tool to professionals and patients. Also, the capability of identify specific etiologic agents can guide more effective and personalized treatments, minimize the indiscriminate use of medications, and minimize side effects.
 
-\begin{figure}[ht!]
-	\caption{Ciência da Computação - Unisinos}
-	\label{fig:logotipo}
-	\centering%
-	\begin{minipage}{.9\textwidth}
-		\includegraphics[width=\textwidth]{images/ciencia-da-computacao.png}
-		\fonte{\cite{computacaoUnisinos}}
-	\end{minipage}
-\end{figure}
+This study focuses on the creation, training, and validation of a convolutional neural network (CNN)-based artificial intelligence model using a large and diverse set of dermatological images. The primary objective is to evaluate the model’s effectiveness in accurately distinguishing between visually similar skin diseases—specifically fungal infections such as tinea, ringworm, and candidiasis, and chronic inflammatory conditions like psoriasis, eczema, and atopic dermatitis—and to identify their respective causative agents. The technical approach includes advanced image preprocessing, data augmentation, and optimization of the CNN architecture to enhance classification performance. The model’s diagnostic accuracy will be rigorously compared with that of experienced dermatologists, using metrics such as sensitivity, specificity, and confusion matrices. The results of this study are expected to contribute significantly to the existing literature, demonstrating the potential of AI-driven tools in dermatological diagnostics and paving the way for future research and clinical applications.
 
-De acordo com \cite{kumar2019traceability} blockchain para a ....
+\subsection{Problems and Motivations}
+
+Diagnosing skin diseases caused by pathogenic microorganisms is a complex challenge in clinical practice, mainly because different etiological agents—such as viruses, bacteria, and fungi—can produce very similar skin manifestations. This overlap often makes it difficult to accurately identify both the disease and the causative agent based solely on visual examination \cite{lallas2019artificial}. The problem is even more pronounced in regions with limited access to specialized dermatological care or where healthcare infrastructure is lacking, increasing the risk of misdiagnosis, delayed treatment, and worsening clinical outcomes for patients \cite{who2023skin}.
+
+Specifically, the core challenge this research addresses lies in the differentiation of skin diseases that, despite distinct etiologies, present with highly similar visual characteristics. Fungal infections such as tinea, ringworm, and candidiasis can be clinically indistinguishable from inflammatory conditions like psoriasis, eczema, and atopic dermatitis based on visual examination alone. This clinical ambiguity often leads to diagnostic uncertainty and can result in inappropriate treatment. This type of diagnostic challenge is a common target for AI-driven solutions, with recent studies demonstrating success in other complex contexts, such as distinguishing malignant from benign eyelid tumors \cite{zloto2025computer}. Therefore, the development of an AI-based model capable of not only distinguishing between these two major categories but also classifying their specific causative agents constitutes the central motivation for this work.
+
+These challenges highlight the urgent need for innovative solutions that can support clinicians in making more accurate and timely diagnoses. The rapid development of artificial intelligence, especially through convolutional neural networks (CNNs), offers a promising path forward. Recent studies have demonstrated that CNN-based AI models can achieve diagnostic performance comparable to that of experienced dermatologists, recognizing subtle differences between diseases and their causative agents—even when these differences are difficult for the human eye to detect \cite{elhaddad2024ai}. Furthermore, collaborative approaches, where dermatologists work alongside AI systems, have shown improved diagnostic accuracy and efficiency, supporting more effective and personalized treatments \cite{winkler2023assessment}. The motivation for this work is to use AI technology to address these diagnostic challenges, improve patient care, and contribute to advancing medical dermatology practice.
+
+\subsection{Research Question}
+
+To guide this investigation, the following research question was defined:
+
+\textbf{Research Question:} \textit{How accurately can a convolutional neural network (CNN) model distinguish between fungal and inflammatory skin diseases, which often present with overlapping visual features, when compared to the diagnostic performance of expert dermatologists?}
+
+This question is motivated by a significant and persistent challenge in global public health. Skin diseases remain a major concern, particularly in underserved regions, as highlighted by the World Health Organization \cite{who2025skinNTDs}. The primary difficulty lies in the substantial clinical overlap among various conditions, where distinct diseases manifest with similar visual signs. This ambiguity is especially pronounced when differentiating between fungal infections (e.g., tinea, candidiasis) and chronic inflammatory diseases (e.g., psoriasis, eczema), where a misdiagnosis can lead to inappropriate treatment and worsened patient outcomes.
+
+In light of these challenges, the World Health Organization advocates for innovative strategies, identifying artificial intelligence as a promising tool to enhance diagnostic accuracy and expand access to care \cite{who2025skinNTDs}. Recent advances in deep learning, particularly CNNs, offer a powerful method for analyzing complex visual data. Studies such as \cite{venkatesh2024deep} have already demonstrated the potential of these models, reporting high accuracy for specific skin conditions and providing a strong rationale for their application in complex differential diagnoses.
+
+The present work aims to address the research question by developing and evaluating a CNN model trained on a diverse dataset of dermatological images. By focusing on the distinction between fungal and inflammatory conditions, this study will assess whether an AI-based approach can achieve diagnostic accuracy comparable to that of expert dermatologists, thereby validating its potential as a tool to support more timely and precise clinical decision-making.
+
+% !!!!! Old version of Scientific Contribution !!!!! %
+
+%\subsection{Scientific Contribution}
+
+%This research addresses a critical challenge in dermatology: the accurate differentiation between fungal infections and inflammatory skin diseases, conditions that frequently exhibit overlapping visual characteristics, thereby complicating diagnosis. While recent studies have demonstrated the potential of artificial intelligence (AI) in the diagnosis of skin diseases, the specific application of convolutional neural network (CNN) models to distinguish between these particular conditions remains underexplored.
+
+%This work is distinguished by its original approach, which involves the development and evaluation of a CNN model trained on a diverse dataset of dermatological images, with a focus on differentiating between fungal infections and chronic inflammatory diseases. We posit that this research has the potential to significantly impact clinical practice by providing a diagnostic support tool that can assist dermatologists, particularly in regions with limited access to specialists.
+
+%It is anticipated that the results of this research will demonstrate that a CNN-based AI model can achieve a level of accuracy comparable to that of experienced dermatologists in differentiating between fungal infections and inflammatory skin diseases. Furthermore, this study may provide valuable insights into the most relevant visual features for differentiating these conditions, thereby contributing to the advancement of knowledge in the fields of dermatology and artificial intelligence.
+
+\subsection{Scientific Contribution}
+
+The primary scientific contributions of this research are organized as follows, addressing a critical and underexplored area at the intersection of dermatology and artificial intelligence:
+
+\begin{itemize}
+\item \textbf{Targeting a Specific and Underexplored Clinical Problem:} This research directly addresses the diagnostic challenge of differentiating between fungal infections and inflammatory skin diseases—conditions known for their significant visual overlap. While AI in dermatology is an active field, this specific differential diagnosis remains a notable gap in the literature, and our work aims to provide a focused solution.
+
+\item \textbf{Development and Validation of a Specialized Diagnostic Model:} We propose and implement a novel convolutional neural network (CNN) architecture specifically designed and trained for this classification task. The model is developed using a diverse dataset of dermatological images, ensuring its robustness and potential for generalization. The core of this contribution lies in the rigorous evaluation of the model's performance against established clinical benchmarks.
+
+\item \textbf{Establishment of a Comparative Performance Benchmark:} A key contribution is the direct, quantitative comparison of our CNN model's diagnostic accuracy against that of expert dermatologists. By using metrics such as accuracy, sensitivity, and specificity, this study will establish a crucial performance benchmark, providing clear evidence of the model's viability as a clinical support tool.
+
+\item \textbf{Contribution to Interdisciplinary Knowledge:} Beyond the practical application, this work is expected to yield valuable insights into the key visual features that distinguish these two types of skin conditions. These findings have the potential to advance knowledge in both dermatology, by highlighting subtle diagnostic markers, and in artificial intelligence, by demonstrating the application of CNNs to solve complex, fine-grained image classification problems in medicine.
+\end{itemize}
+
+\subsection{Objectives}
+
+The primary objective of this research is to develop and evaluate a convolutional neural network (CNN)-based artificial intelligence model capable of accurately differentiating between fungal infections and chronic inflammatory skin diseases using dermatological images. To achieve this overarching goal, the following specific objectives have been defined:
+
+\begin{enumerate}
+\item \textbf{To develop and train a robust CNN model} by curating a comprehensive dataset of dermatological images representing fungal and inflammatory conditions, and optimizing the model's architecture for high classification accuracy.
+\item \textbf{To rigorously evaluate the model's diagnostic performance} by assessing its sensitivity, specificity, and overall accuracy on a validation set, and critically, by benchmarking its performance against that of experienced dermatologists.
+\item \textbf{To analyze and interpret the model's decision-making process} by employing explainability techniques to identify the key visual features it utilizes to distinguish between the two disease categories, thereby providing insights into its diagnostic criteria.
+\end{enumerate}
+
+\subsection{Work Division}
+
+The remainder of this article is structured as follows: Section 2 presents the Background, outlining the key concepts and relevant literature that underpin the technical aspects of the model. Section 3 details the Related Work, providing a comparative analysis of existing approaches. Section 4 presents PATHOVISION, detailing its overview, architecture, algorithm, and implementation aspects. Section 5 describes the Evaluation Methodology, and Section 6 presents the Results and Discussion. Finally, Section 7 concludes the article.
+
+%=======================================================================
+% Background
+%=======================================================================
+\section{Background}
+
+The accurate diagnosis of skin diseases is a critical challenge in healthcare, with significant implications for patient outcomes and public health. Skin conditions are highly prevalent worldwide, and their diagnosis is often complicated by the fact that many diseases present with overlapping visual features. The evolving landscape of diagnostic artificial intelligence (AI) in dermatology, particularly deep learning models, has shown promise in improving diagnostic accuracy for a wide array of skin diseases beyond skin cancer, achieving high accuracy for common conditions such as acne, psoriasis, and eczema, while also highlighting ongoing challenges related to bias and data diversity \cite{venkatesh2024deep}. Furthermore, recent systematic reviews and meta-analyses have demonstrated that AI algorithms can achieve sensitivity and specificity rates comparable to those of expert dermatologists in the classification of skin cancer, underscoring the potential of these technologies in clinical practice, while also noting important limitations and areas for future research \cite{salinas2024systematic}. This section provides a theoretical foundation for this research, outlining the key concepts and relevant literature that underpin the application of artificial intelligence, specifically convolutional neural networks, to improve the differentiation between fungal infections and inflammatory skin diseases.
+
+\subsection{Fungal Skin Infections}
+
+Fungal skin infections are a prevalent group of dermatological conditions caused by various species of fungi. These infections can affect different parts of the body, ranging from superficial infections of the skin, hair, and nails to more invasive and systemic diseases. Accurate diagnosis and appropriate treatment are essential to prevent the spread of infection and alleviate patient discomfort. 
+
+This article will focus on common superficial fungal infections, specifically dermatophytoses (tinea infections) and candidiasis, due to their high prevalence and the diagnostic challenges they present. Tinea infections, affecting the skin, hair, and nails, and candidiasis, impacting skin folds and mucosal surfaces, often exhibit overlapping clinical features with inflammatory skin diseases. This overlap complicates accurate diagnosis and necessitates the development of improved diagnostic methods, such as the application of convolutional neural networks (CNNs) for image-based differentiation.
+
+\subsection{Inflammatory Skin Diseases}
+
+Inflammatory skin diseases are a diverse group of dermatological conditions characterized by inflammation of the skin. These conditions can range from mild, localized rashes to severe, widespread eruptions, significantly impacting patients' quality of life. Accurate diagnosis and appropriate management are crucial to alleviate symptoms, prevent complications, and improve patient outcomes.
+
+This research will focus on common chronic inflammatory skin diseases, specifically eczema (including atopic dermatitis) and psoriasis, due to their high prevalence and the diagnostic challenges they present. Eczema, affecting various areas of the skin with itching, redness, and scaling, and psoriasis, characterized by raised, scaly plaques, often exhibit overlapping clinical features with fungal skin infections. This overlap complicates accurate diagnosis and necessitates the development of improved diagnostic methods, such as the application of convolutional neural networks (CNNs) for image-based differentiation.
+
+\subsection{Challenges in Differential Diagnosis}
+
+Distinguishing between fungal skin infections and inflammatory skin diseases remains a persistent challenge in clinical dermatology, primarily due to the significant overlap in their clinical manifestations. Both categories of disease can present with erythema, scaling, pruritus, and well-demarcated lesions, making it difficult to differentiate them based solely on visual inspection or patient history. This diagnostic ambiguity is further complicated by atypical presentations, partial treatment responses, and the presence of coexisting conditions, which can mask or alter characteristic features. Traditional diagnostic methods, such as direct microscopy, culture, and histopathology, while valuable, are not always definitive and may be limited by sample quality, time constraints, or the need for specialized laboratory resources. Recent reviews emphasize that the complexity of host-pathogen interactions and the variability in immune responses further contribute to diagnostic uncertainty, underscoring the need for more objective and rapid diagnostic tools to support clinical decision-making in dermatology \cite{howell2023dermatopathology,sanromanloza2025decoding}.
+
+\subsection{Artificial Intelligence in Dermatology}
+ 
+Artificial intelligence (AI) is rapidly transforming the field of dermatology, offering new possibilities for both clinical diagnosis and medical education. Recent advances in deep learning, particularly the use of convolutional neural networks (CNNs) and large language models (LLMs), have enabled the development of systems capable of analyzing skin images and patient data with accuracy that rivals or even surpasses that of human experts. For example, a 2025 study published in Nature demonstrated that Google’s medical chatbot, powered by advanced AI, was able to diagnose skin rashes from smartphone photos with greater accuracy than human doctors, highlighting the potential of AI to enhance diagnostic precision and accessibility in dermatological care \cite{lenharo2025google}. In parallel, research in Science has explored the integration of AI-driven “electronic skin” and smart diagnostic tools, which can sense, analyze, and interpret skin conditions in real time, further expanding the role of AI in both patient monitoring and disease management \cite{linghu2025versatile}. These innovations underscore the growing impact of AI in dermatology, from improving early detection and personalized treatment to revolutionizing medical training and patient engagement.
+
+\subsection{Image Datasets for Skin Disease Diagnosis}
+
+A robust and diverse image dataset is fundamental for the development and validation of artificial intelligence models in skin disease diagnosis. Over the past years, several large-scale, publicly available datasets have been curated to support research in this field. The International Skin Imaging Collaboration (ISIC) Archive remains the most widely used resource, offering tens of thousands of dermoscopic images annotated by expert dermatologists, covering a broad spectrum of skin lesions and diseases. Recent studies have highlighted the importance of such datasets in enabling the training of deep learning models, particularly Convolutional Neural Networks (CNNs), to achieve high diagnostic accuracy and generalizability across diverse populations and clinical settings. For instance, a 2025 study in Scientific Reports demonstrated that models trained on the ISIC dataset, combined with advanced preprocessing and segmentation techniques, significantly improved the classification of benign and malignant skin lesions \cite{shakya2025comprehensive}. Additionally, the continuous expansion and refinement of datasets like ISIC, as well as the integration of new repositories such as DermNet and HAM10000, have been crucial in addressing challenges related to class imbalance, image quality, and the representation of rare conditions. These comprehensive datasets not only facilitate the benchmarking of novel algorithms but also contribute to the advancement of AI-driven diagnostic tools that can be deployed in real-world clinical environments \cite{shaik2025attention}.
+
+%=======================================================================
+% Related Work
+%=======================================================================
+\section{Related Work}
+
+Recent years have witnessed significant advances in the application of artificial intelligence (AI) and deep learning techniques for the diagnosis of skin diseases. Several studies have explored the use of convolutional neural networks (CNNs) and other machine learning models to improve diagnostic accuracy, support clinical decision-making, and address the challenges posed by visually similar dermatological conditions.
+
+The research for related works was guided using specific terms in the web site Google Scholar. This inquiry found articles using the following keywords:
+
+\cite{saba2024deep}: A comprehensive review provides an in-depth analysis of deep learning-based approaches for skin lesion classification, highlighting the effectiveness of CNN architectures in distinguishing between benign and malignant lesions. The authors emphasize the importance of large, annotated datasets and discuss the challenges related to data imbalance and variability in image quality, which can impact model performance. Their review also points to the growing trend of integrating explainable AI techniques to enhance the interpretability and trustworthiness of automated diagnostic systems.
+
+\cite{venkatesh2024second}: In the context of fungal skin infections, this study investigates the use of deep learning models for the diagnosis of dermatophytosis. The authors demonstrate that AI-based systems can achieve high diagnostic accuracy in distinguishing dermatophyte infections from other skin conditions, underscoring the potential of these technologies to support clinical practice, especially in settings with limited access to specialized laboratory diagnostics.
+
+\cite{albahli2024hybrid}: This study brings another relevant contribution, presenting a hybrid deep learning model for the detection of skin diseases. Their approach combines CNNs with other machine learning techniques to enhance classification performance, especially in cases where diseases exhibit overlapping visual features. The study also discusses the potential of AI to improve diagnostic accessibility in resource-limited settings, underscoring the importance of developing models that generalize well across diverse populations.
+
+\cite{li2025multimodal}: A recent study explores the use of multimodal deep learning approaches for skin disease diagnosis, integrating clinical images with patient metadata to improve classification accuracy. The authors highlight the advantages of combining different data sources and advanced neural network architectures to address the inherent complexity and variability of dermatological conditions, paving the way for more robust and generalizable AI-driven diagnostic tools.'
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabular}{|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|}
+\hline
+\textbf{Criteria} & \textbf{\cite{saba2024deep})} & \textbf{\cite{venkatesh2024second}} & \textbf{\cite{albahli2024hybrid})} & \textbf{\cite{li2025multimodal}} \\
+\hline
+\textbf{Objective} & Review of deep learning for skin lesion classification & Deep learning for dermatophytosis diagnosis & Hybrid deep learning for skin disease detection & Multimodal deep learning for skin disease diagnosis \\
+\hline
+\textbf{Model Architecture} & Various CNNs (review) & CNN, ResNet, Inception & Hybrid CNN + ML classifiers & Multimodal CNNs integrating images and metadata \\
+\hline
+\textbf{Dataset Size} & Varies; large public datasets reviewed & 3000+ images & 2000+ images & 10000+ images + metadata \\
+\hline
+\textbf{Validation Methods} & Cross-validation, hold-out & 5-fold cross-validation & Hold-out, cross-validation & 10-fold cross-validation \\
+\hline
+\textbf{Performance Metrics} & Up to 95\% accuracy & Acc: 92\%, Sens: 90\%, Spec: 93\% & Acc: 94\%, F1: 0.92 & Acc: 96\%, F1: 0.95 \\
+\hline
+\textbf{Diseases Addressed} & Multiple (melanoma, nevus, etc.) & Dermatophytosis vs. other skin diseases & 5+ skin diseases & 8+ skin diseases \\
+\hline
+\textbf{Generalization} & Data imbalance, image quality & Limited to dermatophytosis, population bias & Overfitting, dataset diversity & Addressed via multimodal data, but some bias remains \\
+\hline
+\textbf{Preprocessing} & Normalization, augmentation & Augmentation, normalization & Augmentation, resizing & Augmentation, normalization, metadata integration \\
+\hline
+\end{tabular}
+\caption{Comparative summary of recent works on AI for skin disease diagnosis.}
+\label{tab:relatedwork}
+\end{table}
+
+Collectively, these studies underscore the transformative potential of AI in dermatology, highlighting the diversity of approaches, datasets, and validation strategies employed in recent research. While significant progress has been made in leveraging advanced deep learning models, high-quality datasets, and complementary data sources such as the skin microbiome to improve diagnostic accuracy, persistent challenges remain—particularly regarding data imbalance, generalization, and real-world applicability. These findings emphasize the importance of continued research focused on robust model development, comprehensive validation, and the integration of multimodal and complementary data sources to ensure reliable, accurate, and clinically relevant AI solutions in dermatology.
+
+\section{PATHOVISION}
+
+\subsection{Visão Geral}
+
+\subsection{Arquitetura}
+
+\subsection{Algoritmo}
+
+\subsection{Aspectos de Implementação}
+
+\section{Evaluation Method}
+
+\section{Results and Discussion}
+
+\section{Conclusion}
+
 
 
 \section{Nova seção}
@@ -187,4 +329,5 @@ Conteúdo do Apêndice. Não esqueça de referenciar os anexos no corpo do texto
 
 Os anexos são elementos opcionais e não contam para os números mínimo e máximo de páginas do regulamento do TCC da Unisinos (mínimo 25 e máximo 30).
 
+\end{otherlanguage}
 \end{document}
