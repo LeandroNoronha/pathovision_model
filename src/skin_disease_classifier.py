@@ -17,9 +17,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix, precision_score, recall_score, f1_score, roc_curve, auc
 import seaborn as sns
+import os
 
 class SkinDiseaseClassifier:
-    def __init__(self, num_classes, input_shape=(260, 260, 3)):
+    def __init__(self, num_classes, input_shape=(500, 500, 3)):
         self.num_classes = num_classes # Number of disease classes
         self.input_shape = input_shape # Input image format
         self.model = None
@@ -30,7 +31,7 @@ class SkinDiseaseClassifier:
         base_model = EfficientNetB2(
             weights='imagenet',
             include_top=False,
-            input_shape=self.input_shape
+            input_shape=(500, 500, 3)
         )
         
         # Freeze initial layers for transfer learning
@@ -96,14 +97,16 @@ class SkinDiseaseClassifier:
             train_dir,
             target_size=self.input_shape[:2],
             batch_size=batch_size,
-            class_mode='categorical'
+            class_mode='categorical',
+            color_mode='rgb'
         )
         
         val_generator = val_datagen.flow_from_directory(
             val_dir,
             target_size=self.input_shape[:2],
             batch_size=batch_size,
-            class_mode='categorical'
+            class_mode='categorical',
+            color_mode='rgb'
         )
         
         return train_generator, val_generator
@@ -404,26 +407,55 @@ class SkinDiseaseClassifier:
         plt.show()
 
 def main():
-    # Define the 6 skin disease classes
-    class_names = [
-        # Fungal Infections
-        'Tinea',
-        'Ringworm',
-        'Candidiasis',
-        # Inflammatory Conditions
-        'Psoriasis',
-        'Eczema',
-        'Atopic Dermatitis'
-    ]
+    base_dir = "/home/lns/repos/research_project-unisinos/dataset"
+    train_dir = os.path.join(base_dir, "train")
+    val_dir = os.path.join(base_dir, "valid")
+    test_dir = os.path.join(base_dir, "test")
     
+    class_names = sorted(os.listdir(train_dir))
     num_classes = len(class_names)
     
-    # Initialize the classifier
-    classifier = SkinDiseaseClassifier(num_classes=num_classes)
+    print(f"Detected classes: {class_names}")
+    print(f"Number of classes: {num_classes}")
     
-    # Build the model
+    # Start the classifier
+    classifier = SkinDiseaseClassifier(num_classes=num_classes, input_shape=(500, 500, 3))
+    
+    # Build model
     model = classifier.build_model()
     print(f"Model created with {model.count_params()} parameters")
-
+    
+    # Generate train and validation
+    train_gen, val_gen = classifier.prepare_data_generators(
+        train_dir=train_dir,
+        val_dir=val_dir,
+        batch_size=32
+    )
+    
+    # Train
+    history = classifier.train(
+        train_generator=train_gen,
+        val_generator=val_gen,
+        epochs=50
+    )
+    
+    # Plot train x validation
+    classifier.plot_training_history()
+    
+    # Test generator
+    test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
+        preprocessing_function=preprocess_input
+    )
+    test_gen = test_datagen.flow_from_directory(
+        test_dir,
+        target_size=classifier.input_shape[:2],
+        batch_size=32,
+        class_mode='categorical',
+        shuffle=False,
+        color_mode='rgb'
+    )
+    
+    # Evaluation on the Test Set
+    metrics = classifier.evaluate_model(test_gen, class_names)
 if __name__ == "__main__":
     main()
