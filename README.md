@@ -9,10 +9,14 @@ The repository serves as a comprehensive workspace for organizing research, expe
 
 The evolution of this project has generated different versions of the classifier:
 
-- **v3.0.0 (Stable)**  
-  - First stable and functional version of the model.  
-  - Trained with EfficientNetB2 and validated metrics.  
+- **v4.0.0 (Stable)**  
+  - Better legibility.  
+  - Improved acquisition of metrics.  
   - Recommended version for use.
+
+- **v3.0.0 (Stable_old)**  
+  - First stable and functional version of the model.  
+  - Trained with EfficientNetB2 and validated metrics.
 
 - **v2.0.0 (Unstable)**  
   - Contains compatibility issues with Keras/TensorFlow.  
