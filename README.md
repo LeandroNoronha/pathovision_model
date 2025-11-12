@@ -1,4 +1,4 @@
-# research_project-unisinos
+# PATHOVISION Model
 
 This repository is dedicated to the development of my final paper at Unisinos.  
 It includes all the code implementations and written content, structured in LaTeX while adhering to ABNT standards.  
@@ -31,4 +31,4 @@ The evolution of this project has generated different versions of the classifier
 To check out the stable release, run:
 
 ```bash
-git checkout tags/v3.0.0
+git checkout tags/v4.0.0
