@@ -1,10 +1,11 @@
-# ----------------------------------------------------------------------------
-# Created By  : Leandro Noronha da Silva
-# Created Date: 26/08/2025
-# version ='3.0.0'
-# ---------------------------------------------------------------------------
-""" PATHOVISION """
-# ---------------------------------------------------------------------------
+"""
+PATHOVISION Model for UNISINOS Research Project
+
+Created By  : Leandro Noronha da Silva
+Created Date: 26/08/2025
+version = '4.0.0'
+"""
+
 import tensorflow as tf
 from tensorflow.keras.applications import EfficientNetB2
 from tensorflow.keras.applications.efficientnet import preprocess_input
@@ -14,93 +15,135 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import classification_report, confusion_matrix, precision_score, recall_score, f1_score, roc_curve, auc
-import seaborn as sns
+from sklearn.metrics import classification_report, confusion_matrix, precision_score, recall_score, f1_score
 import os
 
-class SkinDiseaseClassifier:
+class PathovisionClassifier:
+    """
+    This class implements the transfer learning with EfficientNetB2 
+    for classify dermatologic images from dataset
+    """
+    
     def __init__(self, num_classes, input_shape=(500, 500, 3)):
-        self.num_classes = num_classes # Number of disease classes
-        self.input_shape = input_shape # Input image format
+        """
+        This definition initializes the skin disease classifier
+        """
+        self.num_classes = num_classes # number of disease classes
+        self.input_shape = input_shape # input image format
         self.model = None
         self.history = None
-        
-    def build_model(self):
-        # Load pre-trained EfficientNetB2
+   
+    def model_pathovision_construct(self):
+        """
+        This definition construct the PATHOVISION model
+        """
+        # load pre-trained EfficientNetB2
         base_model = EfficientNetB2(
-            weights='imagenet',
-            include_top=False,
-            input_shape=(500, 500, 3)
+            include_top=False, 
+            weights='imagenet', # pre-training weights for fast conversion
+            input_tensor=None,
+            input_shape=self.input_shape, # (500, 500, 3) shape
+            pooling=None,
+            classifier_activation=None, # unnecessary because include_top = false
+            name="efficientnetb2",
         )
         
-        # Freeze initial layers for transfer learning
+        # freeze initial layers for transfer learning
         for layer in base_model.layers[:-10]:
-            layer.trainable = False
+            layer.trainable = False # only the last 10 layers trainable
             
-        # Add custom classification head
-        x = base_model.output
-        x = GlobalAveragePooling2D()(x)
-        x = Dense(512, activation='relu')(x)
-        x = Dropout(0.5)(x)
-        x = Dense(256, activation='relu')(x)
-        x = Dropout(0.3)(x)
-        predictions = Dense(self.num_classes, activation='softmax')(x)
+        # add custom classification head
+        x = base_model.output # gets the output from base_model (EfficientNetB2)
+        x = GlobalAveragePooling2D()(x) # converts from 4D to 2D
+        x = Dense(512, activation='relu')(x) # 512 neurons with rectified linear unit
+        x = Dropout(0.5)(x) # turn off 50% from neuros randomly
+        x = Dense(256, activation='relu')(x) # 256 neurons with rectified linear unit
+        x = Dropout(0.3)(x) # turn off 30% from neuros randomly
+        predictions = Dense(self.num_classes, activation='softmax')(x) # final classifier layer
         
-        # Create final model
+        # create final model
         self.model = Model(inputs=base_model.input, outputs=predictions)
-        
-        # Custom F1-Score metric for multi-class
+
         def f1_metric(y_true, y_pred):
-            def recall_m(y_true, y_pred):
+            """
+            This definition calculates the F1-Score metric for 
+            multi-class
+            """
+
+            def recall_metric(y_true, y_pred):
+                """
+                This definition calculates the recall metric
+                """
+                # calculates the True Positives (TP)
                 TP = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(y_true * y_pred, 0, 1)))
+                # calculates the real positives (True Positives (TP) + False Negatives (FN))
                 Positives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(y_true, 0, 1)))
+                # calculates the recall metric (TP / (TP + FN))
                 recall = TP / (Positives + tf.keras.backend.epsilon())
                 return recall
             
-            def precision_m(y_true, y_pred):
+            def precision_metric(y_true, y_pred):
+                """
+                This definition calculates the precision metric
+                """
+                # calculates the True Positives (TP)
                 TP = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(y_true * y_pred, 0, 1)))
+                # calculates the positive predictions (True Positives (TP) + False Positives (FP))
                 Pred_Positives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(y_pred, 0, 1)))
+                # calculates the precision metric (TP / (TP + FP))
                 precision = TP / (Pred_Positives + tf.keras.backend.epsilon())
                 return precision
             
-            precision, recall = precision_m(y_true, y_pred), recall_m(y_true, y_pred)
-            return 2*((precision*recall)/(precision+recall+tf.keras.backend.epsilon()))
+            # calculate precision and recall
+            precision = precision_metric(y_true, y_pred)
+            recall = recall_metric(y_true, y_pred)
+
+            # return F1-score
+            return 2 * ((precision * recall) / (precision + recall + tf.keras.backend.epsilon()))
         
-        # Compile model with accuracy and F1-score metrics
+        # compile model with accuracy and F1-score metrics
         self.model.compile(
-            optimizer=Adam(learning_rate=0.0001),
+            optimizer=Adam(learning_rate=0.0001), # Adaptive Moment Estimation at 1e-4
             loss='categorical_crossentropy',
-            metrics=['accuracy', f1_metric]
+            metrics=[   # performance monitoring
+                'accuracy', 
+                f1_metric
+            ]
         )
         
         return self.model
     
     def prepare_data_generators(self, train_dir, val_dir, batch_size=32):
-        # Data augmentation for training with EfficientNet preprocessing
+        """
+        This definition prepares data generators for:
+            -> training (applies data augmentation) 
+            -> validation (applies only normalization)
+        """
+
+        # data augmentation for training with EfficientNet preprocessing
         train_datagen = ImageDataGenerator(
-            preprocessing_function=preprocess_input,
-            rotation_range=20,
-            width_shift_range=0.2,
-            height_shift_range=0.2,
-            horizontal_flip=True,
-            zoom_range=0.2,
-            shear_range=0.2,
-            fill_mode='nearest'
+            preprocessing_function=preprocess_input, # normalizes pixels to the range expected by the network
+            rotation_range=20, # rotates randomly the image to +/- 20 degrees
+            width_shift_range=0.2, # shift images horizontally up to 20% of their size
+            height_shift_range=0.2, # shift images vertically up to 20% of their size
+            horizontal_flip=True, # 50% chance of mirroring the image
+            zoom_range=0.2, # simulates different camera distances.
+            shear_range=0.2, # simulates different photo capture angles
+            fill_mode='nearest' # copies the nearest pixel (avoids artificial black borders)
         )
         
-        # Only EfficientNet preprocessing for validation
+        # only EfficientNet preprocessing for validation
         val_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
         
-        # Data generators
+        # train data generator with augmentation
         train_generator = train_datagen.flow_from_directory(
-            train_dir,
-            target_size=self.input_shape[:2],
-            batch_size=batch_size,
-            class_mode='categorical',
-            color_mode='rgb'
+            train_dir, 
+            target_size=self.input_shape[:2], # guarantees resizing of all images to (500, 500) pixels
+            batch_size=batch_size, # loads 32 images at a time (batch_size).
+            class_mode='categorical', # labels in one-hot encoding format
+            color_mode='rgb' # loads images in RGB (Red, Green, Blue)
         )
-        
+        # validation data generator without augmentation
         val_generator = val_datagen.flow_from_directory(
             val_dir,
             target_size=self.input_shape[:2],
@@ -112,115 +155,115 @@ class SkinDiseaseClassifier:
         return train_generator, val_generator
     
     def train(self, train_generator, val_generator, epochs=50):
+        """
+        This definition is responsible for train the PATHOVISION model
+        """
+
         # Training callbacks
         callbacks = [
-            EarlyStopping(
-                monitor='val_loss',
-                patience=10,
-                restore_best_weights=True
-            ),
             ReduceLROnPlateau(
-                monitor='val_loss',
-                factor=0.2,
-                patience=5,
-                min_lr=1e-7
+                monitor='val_loss', # monitors the validation loss
+                factor=0.2, # reduces the Learning Rate (LR) in 20%
+                patience=5, # wait 5 epochs without improvement before reduce LR
+                min_lr=1e-7 # minimum learning rate
             ),
             ModelCheckpoint(
-                'best_skin_disease_model.h5',
-                monitor='val_accuracy',
-                save_best_only=True,
-                mode='max'
+                'best_skin_disease_model.h5', # output model archive
+                monitor='val_accuracy', # monitors the validation accuracy
+                save_best_only=True, # save only when val_accuracy improves
+                mode='max' # better when higher val_accuracy
             )
         ]
         
-        # Model training
+        # Model training from Keras
         self.history = self.model.fit(
-            train_generator,
-            epochs=epochs,
-            validation_data=val_generator,
-            callbacks=callbacks
+            train_generator, # Training data generator (with augmentation)
+            epochs=epochs, # number of ephocs (50)
+            validation_data=val_generator, # Evaluate the model after each season
+            callbacks=callbacks # apply the callbacks defined previously
         )
         
         return self.history
-    
-    def plot_training_history(self):
-        if self.history is None:
-            print("Model not trained yet!")
+
+    def show_top_confusions(self, test_generator, class_names, k=5):
+        """
+        This definition is responsible for display the 5 (five) more 
+        confident model errors
+        """
+
+        filepaths = np.array(test_generator.filepaths) # get the full paths of all images in the test set
+        # get the true labels (real classes) for each image (e.g. 0=tinea, 1=candidiasis, ...)
+        y_true = test_generator.classes 
+        y_score = self.model.predict(test_generator) # makes predictions on all test images
+        y_pred = np.argmax(y_score, axis=1) # get the predicted class for each image
+        confidences = y_score.max(axis=1) # get the confidence of each prediction
+
+        # find the indices of the images where the model made a mistake
+        errors_idx = np.where(y_pred != y_true)[0]
+        if len(errors_idx) == 0:
+            print("!!! No errors in the test (PATHOVISION model perfect 100%) !!!")
             return
-            
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
-        
-        # Accuracy
-        ax1.plot(self.history.history['accuracy'], label='Training')
-        ax1.plot(self.history.history['val_accuracy'], label='Validation')
-        ax1.set_title('Model Accuracy')
-        ax1.set_xlabel('Epoch')
-        ax1.set_ylabel('Accuracy')
-        ax1.legend()
-        
-        # Loss
-        ax2.plot(self.history.history['loss'], label='Training')
-        ax2.plot(self.history.history['val_loss'], label='Validation')
-        ax2.set_title('Model Loss')
-        ax2.set_xlabel('Epoch')
-        ax2.set_ylabel('Loss')
-        ax2.legend()
-        
-        plt.tight_layout()
-        plt.show()
+
+        # sort errors by confidence (highest to lowest)
+        sorted_err = errors_idx[np.argsort(-confidences[errors_idx])]
+
+        print(f"Top {min(k, len(sorted_err))} more confident errors:")       
+        for i in sorted_err[:k]: # loop through the first k most confident errors
+            true_cls = class_names[y_true[i]]
+            pred_cls = class_names[y_pred[i]]
+            conf = confidences[i]
+            print(f"[{conf:.3f}] True: {true_cls} | Pred: {pred_cls} | Path: {filepaths[i]}")
     
     def predict_image(self, image_path, class_names):
+        """
+        This definition is responsible for make a prediction on a 
+        single image
+        """
         # Load and preprocess image
         img = tf.keras.preprocessing.image.load_img(
             image_path, 
-            target_size=self.input_shape[:2]
+            target_size=self.input_shape[:2]  # guarantees resizing of all images to (500, 500) pixels
         )
-        img_array = tf.keras.preprocessing.image.img_to_array(img)
-        img_array = preprocess_input(np.expand_dims(img_array, axis=0))        
+        img_array = tf.keras.preprocessing.image.img_to_array(img) # converts the PIL image (500, 500) into a 3D NumPy array (RGB)
+        img_array = preprocess_input(np.expand_dims(img_array, axis=0)) # applies specific preprocessing from EfficientNet        
 
-        predictions = self.model.predict(img_array)
+        predictions = self.model.predict(img_array) # performs the forward pass through the neural network
         predicted_class = np.argmax(predictions[0])
-        confidence = predictions[0][predicted_class]
+        confidence = predictions[0][predicted_class] # accesses the probability value in the predicted class index
         
         return class_names[predicted_class], confidence
     
     def calculate_metrics(self, y_true, y_pred, class_names):
         """
-        Compute essential evaluation metrics with explicit formulas:
-        - Accuracy = (TP + TN) / (TP + TN + FP + FN)
-        - Sensitivity (Recall) = TP / (TP + FN)
-        - Specificity = TN / (TN + FP)
-        - Precision = TP / (TP + FP)
-        - F1-Score = 2 * (Precision * Recall) / (Precision + Recall)
+        This definition is responsible for compute essential 
+        evaluation metrics
         """
-        
-        # Confusion matrix
-        cm = confusion_matrix(y_true, y_pred)
-        
-        # Metrics per class
-        metrics = {}
+
+        cm = confusion_matrix(y_true, y_pred) # creates the confusion matrix
+        metrics = {} # initializes a dictionary to store the metrics calculated for each class
         
         # For each class, compute TP, TN, FP, FN
         for i, class_name in enumerate(class_names):
-            TP = cm[i, i]
-            FN = np.sum(cm[i, :]) - TP
-            FP = np.sum(cm[:, i]) - TP
-            TN = np.sum(cm) - TP - FN - FP
+            TP = cm[i, i] # TP -> true positives
+            FN = np.sum(cm[i, :]) - TP # FN -> false negatives
+            FP = np.sum(cm[:, i]) - TP # FP -> false positives
+            TN = np.sum(cm) - TP - FN - FP # TN -> true negatives
             
-            # Metrics using formulas
+            # calculates all metrics based on formulas
             accuracy = (TP + TN) / (TP + TN + FP + FN) if (TP + TN + FP + FN) > 0 else 0
             sensitivity = TP / (TP + FN) if (TP + FN) > 0 else 0
             specificity = TN / (TN + FP) if (TN + FP) > 0 else 0
             precision = TP / (TP + FP) if (TP + FP) > 0 else 0
             f1 = 2 * (precision * sensitivity) / (precision + sensitivity) if (precision + sensitivity) > 0 else 0
             
+            # adds the calculated metrics per class to the dictionary
             metrics[class_name] = {
                 'TP': TP, 'TN': TN, 'FP': FP, 'FN': FN,
-                'Accuracy': accuracy,
-                'Sensitivity': sensitivity,
-                'Specificity': specificity,
-                'Precision': precision,
-                'F1-Score': f1
+                'Accuracy': accuracy, # accuracy = (TP + TN) / (TP + TN + FP + FN)
+                'Sensitivity': sensitivity, # sensitivity = TP / (TP + FN)
+                'Specificity': specificity, # specificity = TN / (TN + FP)
+                'Precision': precision, # precision = TP / (TP + FP)
+                'F1-Score': f1 # F1-Score = 2 * (Precision * Recall) / (Precision + Recall)
             }
         
         # Global metrics (weighted by support where applicable)
@@ -229,6 +272,7 @@ class SkinDiseaseClassifier:
         global_recall = recall_score(y_true, y_pred, average='weighted')
         global_f1 = f1_score(y_true, y_pred, average='weighted')
         
+        # adds global metrics to the dictionary
         metrics['Global'] = {
             'Accuracy': global_accuracy,
             'Precision': global_precision,
@@ -238,119 +282,23 @@ class SkinDiseaseClassifier:
         
         return metrics, cm
     
-    def plot_metrics_comparison(self, metrics, class_names):
-        """Plot comparative bar charts of metrics per class."""
-        
-        # Extract per-class metrics
-        classes = [cls for cls in class_names]
-        accuracies = [metrics[cls]['Accuracy'] for cls in classes]
-        sensitivities = [metrics[cls]['Sensitivity'] for cls in classes]
-        specificities = [metrics[cls]['Specificity'] for cls in classes]
-        precisions = [metrics[cls]['Precision'] for cls in classes]
-        f1_scores = [metrics[cls]['F1-Score'] for cls in classes]
-        
-        # Subplots
-        fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-        fig.suptitle('Performance Metrics per Class', fontsize=16, fontweight='bold')
-        
-        # Accuracy
-        axes[0,0].bar(classes, accuracies, color='skyblue', alpha=0.7)
-        axes[0,0].set_title('Accuracy per Class')
-        axes[0,0].set_ylabel('Accuracy')
-        axes[0,0].set_ylim(0, 1)
-        axes[0,0].tick_params(axis='x', rotation=45)
-        
-        # Sensitivity (Recall)
-        axes[0,1].bar(classes, sensitivities, color='lightgreen', alpha=0.7)
-        axes[0,1].set_title('Sensitivity (Recall) per Class')
-        axes[0,1].set_ylabel('Sensitivity')
-        axes[0,1].set_ylim(0, 1)
-        axes[0,1].tick_params(axis='x', rotation=45)
-        
-        # Specificity
-        axes[0,2].bar(classes, specificities, color='lightcoral', alpha=0.7)
-        axes[0,2].set_title('Specificity per Class')
-        axes[0,2].set_ylabel('Specificity')
-        axes[0,2].set_ylim(0, 1)
-        axes[0,2].tick_params(axis='x', rotation=45)
-        
-        # Precision
-        axes[1,0].bar(classes, precisions, color='gold', alpha=0.7)
-        axes[1,0].set_title('Precision per Class')
-        axes[1,0].set_ylabel('Precision')
-        axes[1,0].set_ylim(0, 1)
-        axes[1,0].tick_params(axis='x', rotation=45)
-        
-        # F1-Score
-        axes[1,1].bar(classes, f1_scores, color='mediumpurple', alpha=0.7)
-        axes[1,1].set_title('F1-Score per Class')
-        axes[1,1].set_ylabel('F1-Score')
-        axes[1,1].set_ylim(0, 1)
-        axes[1,1].tick_params(axis='x', rotation=45)
-        
-        # Combined comparison
-        x = np.arange(len(classes))
-        width = 0.15
-        
-        axes[1,2].bar(x - 2*width, accuracies, width, label='Accuracy', alpha=0.8)
-        axes[1,2].bar(x - width, sensitivities, width, label='Sensitivity', alpha=0.8)
-        axes[1,2].bar(x, specificities, width, label='Specificity', alpha=0.8)
-        axes[1,2].bar(x + width, precisions, width, label='Precision', alpha=0.8)
-        axes[1,2].bar(x + 2*width, f1_scores, width, label='F1-Score', alpha=0.8)
-        
-        axes[1,2].set_title('Comparison of All Metrics')
-        axes[1,2].set_ylabel('Score')
-        axes[1,2].set_xticks(x)
-        axes[1,2].set_xticklabels(classes, rotation=45)
-        axes[1,2].legend()
-        axes[1,2].set_ylim(0, 1)
-        
-        plt.tight_layout()
-        plt.show()
-    
-    def plot_roc_curves(self, test_generator, class_names):
-        """Plot ROC curves and AUC for each class."""
-        
-        # Predictions and true labels (one-hot)
-        predictions = self.model.predict(test_generator)
-        y_true = tf.keras.utils.to_categorical(test_generator.classes, num_classes=self.num_classes)
-        
-        plt.figure(figsize=(12, 8))
-        
-        # Class-wise ROC
-        for i, class_name in enumerate(class_names):
-            fpr, tpr, _ = roc_curve(y_true[:, i], predictions[:, i])
-            roc_auc = auc(fpr, tpr)
-            plt.plot(fpr, tpr, linewidth=2, label=f'{class_name} (AUC = {roc_auc:.3f})')
-        
-        # Random classifier diagonal
-        plt.plot([0, 1], [0, 1], 'k--', linewidth=1, label='Random Classifier')
-        
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel('False Positive Rate (1 - Specificity)')
-        plt.ylabel('True Positive Rate (Sensitivity)')
-        plt.title('ROC Curves per Class')
-        plt.legend(loc="lower right")
-        plt.grid(True, alpha=0.3)
-        plt.show()
-    
     def evaluate_model(self, test_generator, class_names):
-        """Comprehensive model evaluation with metrics, confusion matrix, and ROC curves."""
+        """
+        This definition is responsible to evaluates the model
+        performance on the test set
+        """
         
-        predictions = self.model.predict(test_generator)
-        y_pred = np.argmax(predictions, axis=1)
-        y_true = test_generator.classes
+        predictions = self.model.predict(test_generator) # processes all images in the test set through the model
+        y_pred = np.argmax(predictions, axis=1) # selects the class with the highest probability
+        y_true = test_generator.classes # access the actual labels of the images
         
-        # Compute metrics using implemented formulas
+        # compute metrics using implemented formulas
         metrics, cm = self.calculate_metrics(y_true, y_pred, class_names)
+
+        # detailed metrics report visualization
+        print(" >>> DETAILED VIEW OF GLOBAL AND PER CLASS METRICS <<<")
         
-        # Detailed metrics report
-        print("="*80)
-        print("DETAILED METRICS REPORT")
-        print("="*80)
-        
-        # Per-class metrics
+        # metrics per class
         for class_name in class_names:
             print(f"\n{class_name.upper()}:")
             print(f"   TP: {metrics[class_name]['TP']}, TN: {metrics[class_name]['TN']}")
@@ -361,86 +309,54 @@ class SkinDiseaseClassifier:
             print(f"   Precision:     {metrics[class_name]['Precision']:.4f}")
             print(f"   F1-Score:      {metrics[class_name]['F1-Score']:.4f}")
         
-        # Global metrics
+        # global metrics
         print(f"\nGLOBAL METRICS:")
         print(f"   Global Accuracy:   {metrics['Global']['Accuracy']:.4f}")
         print(f"   Global Precision:  {metrics['Global']['Precision']:.4f}")
         print(f"   Global Sensitivity:{metrics['Global']['Sensitivity']:.4f}")
         print(f"   Global F1-Score:   {metrics['Global']['F1-Score']:.4f}")
         
-        # Classification report (sklearn)
+        # classification report (sklearn)
         print("\nCLASSIFICATION REPORT (sklearn):")
         print(classification_report(y_true, y_pred, target_names=class_names))
         
-        # Plots
-        self.plot_metrics_comparison(metrics, class_names)
-        self.plot_confusion_matrix(cm, class_names)
-        self.plot_roc_curves(test_generator, class_names)
-        
         return metrics
-    
-    def plot_confusion_matrix(self, cm, class_names):
-        """Plot an enhanced confusion matrix with counts and row-wise percentages."""
-        plt.figure(figsize=(12, 10))
-        
-        # Row-wise percentages
-        cm_percent = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
-        
-        # Combined annotations (count + percent)
-        annotations = np.empty_like(cm).astype(str)
-        for i in range(cm.shape[0]):
-            for j in range(cm.shape[1]):
-                annotations[i, j] = f'{cm[i,j]}\n({cm_percent[i,j]:.1f}%)'
-        
-        sns.heatmap(
-            cm, annot=annotations, fmt='', cmap='Blues', 
-            xticklabels=class_names, yticklabels=class_names,
-            cbar_kws={'label': 'Number of Samples'}
-        )
-        
-        plt.title('Confusion Matrix\n(Count and Row Percentage)', fontsize=14, fontweight='bold')
-        plt.ylabel('True Class', fontsize=12)
-        plt.xlabel('Predicted Class', fontsize=12)
-        plt.xticks(rotation=45)
-        plt.yticks(rotation=0)
-        plt.tight_layout()
-        plt.show()
 
 def main():
+    # HardCoded dataset directory
     base_dir = "/home/lns/repos/research_project-unisinos/dataset"
-    train_dir = os.path.join(base_dir, "train")
-    val_dir = os.path.join(base_dir, "valid")
-    test_dir = os.path.join(base_dir, "test")
+    train_dir = os.path.join(base_dir, "train") # defines the base path for the train dataset directory
+    val_dir = os.path.join(base_dir, "valid") # defines the base path for the validation dataset directory
+    test_dir = os.path.join(base_dir, "test") # defines the base path for the test dataset directory
     
+    # automatic class detection
     class_names = sorted(os.listdir(train_dir))
     num_classes = len(class_names)
     
+    # display the class detection
     print(f"Detected classes: {class_names}")
     print(f"Number of classes: {num_classes}")
     
-    # Start the classifier
-    classifier = SkinDiseaseClassifier(num_classes=num_classes, input_shape=(500, 500, 3))
+    # start the classifier
+    classifier = PathovisionClassifier(num_classes=num_classes, input_shape=(500, 500, 3))
     
-    # Build model
-    model = classifier.build_model()
+    # build model architecture
+    model = classifier.model_pathovision_construct()
     print(f"Model created with {model.count_params()} parameters")
     
-    # Generate train and validation
+    # generate train and validation
     train_gen, val_gen = classifier.prepare_data_generators(
         train_dir=train_dir,
         val_dir=val_dir,
         batch_size=32
     )
     
-    # Train
+    # model train
     history = classifier.train(
         train_generator=train_gen,
         val_generator=val_gen,
         epochs=50
     )
-    
-    # Plot train x validation
-    classifier.plot_training_history()
     
     # Test generator
     test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
@@ -457,5 +373,9 @@ def main():
     
     # Evaluation on the Test Set
     metrics = classifier.evaluate_model(test_gen, class_names)
+
+    # Show top confusions
+    classifier.show_top_confusions(test_gen, class_names, k=10)
+
 if __name__ == "__main__":
     main()
