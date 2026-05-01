@@ -4,6 +4,8 @@ Paper: "Decoding Dermatological Patterns with AI" (Noronha et al.)
 Architecture: EfficientNetB2 (ImageNet) + GAP + Dense(512) + Dense(256) + Dense(7)
 
 DO NOT MODIFY this file for experiments. Create new model files instead.
+
+Version: 1.0.0.0
 """
 
 import logging

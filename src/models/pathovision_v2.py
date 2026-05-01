@@ -5,6 +5,8 @@ Improvements over the original:
 - Optional SE attention in classification head
 - Optional attention pooling
 - Better regularization options
+
+Version: 1.0.0.0
 """
 
 import logging
