@@ -1,0 +1,85 @@
+# Ablation Study — Resolution 260x260
+# input_size set to [260, 260]; everything else identical to base.yaml
+
+experiment:
+  name: "ablation_resolution_260"
+  seed: 42
+  output_dir: "outputs"
+
+data:
+  dataset_dir: "datasets/data"
+  input_size: [260, 260]
+  batch_size: 16
+  accumulation_steps: 2  # effective batch = 32
+  num_workers: 4
+  pin_memory: true
+  classes:
+    - "Acne"
+    - "Candidiasis"
+    - "Eczema"
+    - "NailFungus"
+    - "Normal"
+    - "Psoriasis"
+    - "Tinea"
+
+augmentation:
+  rotation_limit: 20
+  shift_limit: 0.2
+  horizontal_flip: true
+  zoom_limit: 0.2
+  shear_limit: 20
+  color_jitter: null
+  random_erasing: null
+  clahe: null
+  elastic: null
+
+model:
+  backbone: "efficientnet_b2"
+  pretrained: true
+  freeze_strategy: "last_n"
+  freeze_except_last_n: 10
+  head:
+    type: "pathovision"
+    hidden_dims: [512, 256]
+    dropout_rates: [0.5, 0.3]
+    activation: "relu"
+  num_classes: 7
+
+training:
+  epochs: 50
+  optimizer:
+    name: "adam"
+    lr: 0.0001
+    weight_decay: 0.0
+  loss:
+    name: "cross_entropy"
+    class_weights: null
+    label_smoothing: 0.0
+    focal_gamma: null
+  mixed_precision: true
+  gradient_clip: null
+
+callbacks:
+  reduce_lr:
+    enabled: true
+    monitor: "val_loss"
+    factor: 0.2
+    patience: 5
+    min_lr: 0.0000001
+  checkpoint:
+    enabled: true
+    monitor: "val_accuracy"
+    mode: "max"
+    save_top_k: 1
+  early_stopping:
+    enabled: false
+    monitor: "val_loss"
+    patience: 15
+    min_delta: 0.001
+
+evaluation:
+  tta: false
+  tta_transforms: 5
+  save_predictions: true
+  generate_plots: true
+  export_latex: true

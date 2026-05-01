@@ -1,0 +1,87 @@
+# [R1] DINOv2 ViT-Small — Foundation Model Comparison
+# Self-supervised pretrained on large image corpus
+# Represents the foundation model approach (reviewer requirement)
+
+experiment:
+  name: "dinov2_vit_small"
+  seed: 42
+  output_dir: "outputs"
+
+data:
+  dataset_dir: "datasets/data"
+  input_size: [384, 384]
+  batch_size: 16
+  accumulation_steps: 2
+  num_workers: 4
+  pin_memory: true
+  balanced_sampling: true
+  classes:
+    - "Acne"
+    - "Candidiasis"
+    - "Eczema"
+    - "NailFungus"
+    - "Normal"
+    - "Psoriasis"
+    - "Tinea"
+
+augmentation:
+  rotation_limit: 20
+  shift_limit: 0.2
+  horizontal_flip: true
+  zoom_limit: 0.2
+  shear_limit: 20
+  color_jitter:
+    brightness: 0.2
+    contrast: 0.2
+    saturation: 0.2
+    hue: 0.05
+
+model:
+  backbone: "vit_small"
+  pretrained: true
+  freeze_strategy: "last_n"
+  freeze_except_last_n: 20
+  head:
+    type: "pathovision"
+    hidden_dims: [512, 256]
+    dropout_rates: [0.4, 0.3]
+    activation: "relu"
+  num_classes: 7
+
+training:
+  epochs: 50
+  optimizer:
+    name: "adamw"
+    lr: 0.00003
+    weight_decay: 0.05
+  loss:
+    name: "focal"
+    class_weights: "inverse_frequency"
+    label_smoothing: 0.1
+    focal_gamma: 2.0
+  mixed_precision: true
+  gradient_clip: 1.0
+  scheduler:
+    name: "cosine_warmup"
+    warmup_epochs: 5
+    min_lr: 0.0000001
+
+callbacks:
+  reduce_lr:
+    enabled: false
+  checkpoint:
+    enabled: true
+    monitor: "val_accuracy"
+    mode: "max"
+    save_top_k: 1
+  early_stopping:
+    enabled: true
+    monitor: "val_loss"
+    patience: 15
+    min_delta: 0.001
+
+evaluation:
+  tta: false
+  save_predictions: true
+  generate_plots: true
+  export_latex: true
