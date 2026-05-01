@@ -53,6 +53,73 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# development environment
+# Datasets (large image files)
+datasets/raw/
+datasets/merged/
+datasets/data/
+datasets/external/
+datasets/external_unified/
+datasets/external_validation/
+datasets/external_validation_sd198/
+datasets/*.zip
+datasets/*.tar.gz
+
+# Checkpoints & model weights
+outputs/
+*.pt
+*.pth
+*.h5
+*.onnx
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+.venv/
+meu_ambiente/
+
+# IDE
 .vscode/
-dataset/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+wandb/
+
+# Temp
+*.tmp
+*.bak
+
+# Generated results
+results/
+
+# Compiled articles & generated figures
+article/compiled/
+article/figures/*.png
+
+# LaTeX build artifacts
+doc/
+article/
+*.aux
+*.bbl
+*.blg
+*.out
+*.spl
