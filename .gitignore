@@ -123,3 +123,18 @@ article/
 *.blg
 *.out
 *.spl
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Cache and serialized models
+*.pkl
+*.pickle
+*.joblib
+.cache/
+
+# Temporary files
+*.temp
+*.bak.py
