@@ -131,6 +131,20 @@ datasets = {
             'Tinea':       [94.29, 82.86, 96.32, 80.00, 81.40],
         }
     },
+    'M4b': {
+        'output_dir': Path("results/05_focal_balanced/figures"),
+        'filename': 'efficientnetb2_balanced_radarchart.png',
+        'title': 'PATHOVISION - EfficientNet-B2 Focal Loss (M5)',
+        'data': {
+            'Acne':        [96.45, 88.79, 97.54, 83.74, 86.19],
+            'Candidiasis': [98.60, 80.77, 99.11, 72.41, 76.36],
+            'Eczema':      [90.64, 77.98, 93.43, 72.38, 75.07],
+            'NailFungus':  [96.66, 91.27, 97.51, 85.19, 88.12],
+            'Normal':      [99.89,   100, 99.87, 99.46, 99.73],
+            'Psoriasis':   [90.10, 66.86, 95.26, 75.84, 71.07],
+            'Tinea':       [92.57, 70.71, 96.45, 77.95, 74.16],
+        }
+    },
 }
 
 # ============================================================================
