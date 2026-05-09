@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "PathoVision v2: Multi-Architecture Deep Learning for Dermatological Image Classification"
+version: "2.0.0"
+date-released: "2026-03-21"
+authors:
+  - family-names: "Noronha da Silva"
+    given-names: "Leandro"
+    affiliation: "Universidade do Vale do Rio dos Sinos (Unisinos)"
+  - family-names: "Roehrs"
+    given-names: "Alex"
+    affiliation: "Universidade do Vale do Rio dos Sinos (Unisinos)"
+  - family-names: "da Costa"
+    given-names: "Cristiano Andre"
+    affiliation: "Universidade do Vale do Rio dos Sinos (Unisinos)"
+  - family-names: "Lima"
+    given-names: "Kevin"
+    affiliation: "Universidade do Vale do Rio dos Sinos (Unisinos)"
+  - family-names: "Py"
+    given-names: "Monica Xavier"
+    affiliation: "Universidade do Vale do Rio dos Sinos (Unisinos)"
+  - family-names: "Moralles"
+    given-names: "Cassiano Ricardo Neubauer"
+    affiliation: "Universidade do Vale do Rio dos Sinos (Unisinos)"
+  - family-names: "da Costa"
+    given-names: "Luis Antonio L. F."
+    affiliation: "Universidade do Vale do Rio dos Sinos (Unisinos)"
+  - family-names: "Schmidt"
+    given-names: "Douglas C."
+    affiliation: "William & Mary"
+  - family-names: "Zhou"
+    given-names: "Gang"
+    affiliation: "William & Mary"
+license: Apache-2.0
+keywords:
+  - dermatology
+  - skin-disease-classification
+  - deep-learning
+  - transfer-learning
+  - medical-imaging
+  - explainable-ai
+  - fairness
