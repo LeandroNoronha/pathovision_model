@@ -56,8 +56,8 @@ PathoVision v2 is a complete rewrite of the dermatological image classification 
 **Dataset Processing:**
 - Sources: Human Skin Diseases (Kaggle) + Dermnet (Kaggle)
 - Classes: 7 dermatological conditions (Acne, Candidiasis, Eczema, NailFungus, Normal, Psoriasis, Tinea)
-- Final Dataset: 9,227 images (7,028 train / 775 val / 1,424 test)
-- Duplicate Removal: 4,071 duplicates eliminated, including cross-split leakage
+- Final Dataset: 9,227 images (7.378 train / 920 val / 929 test)
+- Duplicate Removal: Perceptual-hash deduplication removed exact and near-duplicate images and 1,017 train–test leakage groups
 
 **Architectures Supported:**
 - ViT (DINOv2) - Vision Transformer
