@@ -68,10 +68,11 @@ PathoVision v2 is a complete rewrite of the dermatological image classification 
 ## Repository Structure
 
 - `src/` - Core library code (data, models, training, evaluation)
-- `scripts/` - Reproducible experiments (train.py, evaluate.py, gradcam_demo.py)
+- `scripts/` - Reproducible experiments (train.py, evaluate.py, train_all.py, generate_evidence.py)
 - `configs/` - YAML training configurations (17 config files for different architectures)
-- `datasets/` - Dataset organization and cleaning tools
-- `tests/` - Test suite with pytest configuration
+- `datasets/` - Dataset organization, dedup, split and cleaning tools
+- `tests/` - Test suite with pytest (9 tests)
+- `evidence/` - Experimental results: prediction CSVs, figures, McNemar test, PDF report
 
 ## Quick Start
 
@@ -87,33 +88,40 @@ pip install -r requirements.txt
 
 ### Dataset Preparation
 ```bash
-# Download datasets from Kaggle
+# Download datasets from Kaggle (requires kaggle.json token)
 python datasets/download_kaggle.py
 
 # Organize and clean dataset
 python datasets/organize_dataset.py
 
-# Detect and remove duplicates
-python datasets/detect_duplicates.py
-python datasets/detect_duplicates2.py
+# Detect and remove duplicates (dHash perceptual)
+python datasets/detect_duplicates2.py --dataset-dir datasets/merged --method dhash --delete
+
+# Create stratified 80/10/10 train/val/test split
+python datasets/create_split.py --input datasets/merged --output datasets/data --seed 42
 
 # Verify final dataset
 python datasets/verify_dataset.py
 ```
 
-### Basic Usage
+### Training All Models
 ```bash
-# Train a model
-python scripts/train.py --config configs/balanced.yaml
+# Sequential training: M4 (EfficientNetV2-S) → M2 (Swin) → M3 (ConvNeXt)
+python scripts/train_all.py
 
-# Generate Grad-CAM explanations
-python scripts/gradcam_demo.py --model-path outputs/best_model.pt
+# Or individually:
+python scripts/train.py --config configs/improved.yaml      # M4
+python scripts/train.py --config configs/swin_tiny.yaml     # M2
+python scripts/train.py --config configs/convnext_tiny.yaml # M3
+```
 
-# Evaluate fairness
-python scripts/fairness_analysis.py --model-path outputs/best_model.pt
+### Generate Evidence
+```bash
+# Inference CSVs + Ensemble + McNemar test
+python scripts/generate_evidence.py
 
-# Run ablation studies
-python scripts/ablation_study.py
+# Figures (ROC, PR, confusion matrix) for all models
+python scripts/generate_all_figures.py
 ```
 
 ## Dependencies
@@ -124,6 +132,23 @@ python scripts/ablation_study.py
 - **Explainability**: grad-cam>=1.5.0
 - **Config**: pyyaml, tqdm
 - **Dataset**: kaggle (for downloads)
+
+## Experimental Results
+
+Reproducible results from training on 9,224 dermatological images (80/10/10 split, seed=42).  
+Hardware: NVIDIA RTX 5060 (8 GB), PyTorch 2.13+cu132, Windows 10.
+
+| Model | Architecture | Accuracy | Train Time | Early Stop |
+|---|---|---|---|---|
+| **M2** | Swin Transformer Tiny | 86.62% | 2.98h | — |
+| **M3** | ConvNeXt Tiny | **89.43%** | 0.93h | epoch 23 |
+| **M4** | EfficientNetV2-S | 84.14% | 2.67h | epoch 41 |
+| **M6** | Ensemble (M2+M3+M4) | 89.21% | — | — |
+
+**McNemar test (M6 vs M4):** χ² = 25.49, p < 0.0001 — significant.
+
+Per-sample predictions and full metrics are in `evidence/csvs/`.  
+Complete report: `evidence/PathoVision_Relatorio_Completo.pdf` (8 pages).
 
 ## Citation
 
