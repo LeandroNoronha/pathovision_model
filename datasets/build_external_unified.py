@@ -98,6 +98,14 @@ KAGGLE_LABEL_MAPPINGS: dict[str, dict[str, str]] = {
 # is DISCARDED and recorded. Review the printed selection before building.
 INCLUDE_VERSICOLOR = False  # tinea versicolor is Malassezia, not dermatophyte
 
+# Labels matching these substrings are never mapped (distinct clinical
+# entities that would otherwise match a broad pattern). Reviewable via
+# --dry-run, which prints them under DROP.
+SD198_EXCLUDE_SUBSTRINGS = [
+    "keloidalis",  # acne keloidalis nuchae != acne vulgaris
+    "rosacea",     # (acne) rosacea is a distinct entity, not acne vulgaris
+]
+
 SD198_PATTERNS: list[tuple[str, str]] = [
     (r"\bacne\b",                          "Acne"),
     (r"candidiasis|candida",               "Candidiasis"),
@@ -115,6 +123,8 @@ def normalize_label(name: str) -> str:
 def map_sd198_label(label: str) -> str | None:
     norm = normalize_label(label)
     if not INCLUDE_VERSICOLOR and "versicolor" in norm:
+        return None
+    if any(s in norm for s in SD198_EXCLUDE_SUBSTRINGS):
         return None
     for pattern, cls in SD198_PATTERNS:
         if re.search(pattern, norm):
@@ -178,8 +188,22 @@ def export_sd198(raw_dir: Path) -> Path:
         return dest
     from datasets import load_dataset  # lazy import
 
+    # Note: a logged "HEAD .../dataset_infos.json 404" is harmless (optional
+    # metadata file this repo does not have); the download proceeds anyway.
     logger.info("Loading SD-198 from HuggingFace (%s)...", SD198_HF_ID)
-    ds = load_dataset(SD198_HF_ID)
+    try:
+        ds = load_dataset(SD198_HF_ID)
+    except Exception as first_err:  # fall back to the auto-converted parquet branch
+        logger.warning("Default load failed (%s); retrying parquet branch...", first_err)
+        try:
+            ds = load_dataset(SD198_HF_ID, revision="refs/convert/parquet")
+        except Exception:
+            raise SystemExit(
+                "Could not load SD-198 from HuggingFace. Try `pip install -U "
+                "datasets huggingface_hub` and rerun; or download/export the "
+                "dataset manually to a folder-per-label tree and pass it via "
+                "--sd198-dir."
+            ) from first_err
     split = ds[list(ds.keys())[0]]
     label_feature = split.features["label"]
     dest.mkdir(parents=True, exist_ok=True)

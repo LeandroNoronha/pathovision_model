@@ -58,7 +58,7 @@ datasets/raw/
 datasets/merged/
 datasets/data/
 datasets/external/
-datasets/external_unified/
+datasets/external_unified/*/
 datasets/external_validation/
 datasets/external_validation_sd198/
 datasets/*.zip
