@@ -164,7 +164,6 @@ sd198,striae,26,no unambiguous correspondence to target classes
 sd198,subungual_hematoma,17,no unambiguous correspondence to target classes
 sd198,syringoma,49,no unambiguous correspondence to target classes
 sd198,terry's_nails,10,no unambiguous correspondence to target classes
-sd198,tinea_versicolor,60,no unambiguous correspondence to target classes
 sd198,toe_deformity,17,no unambiguous correspondence to target classes
 sd198,trichilemmal_cyst,14,no unambiguous correspondence to target classes
 sd198,trichofolliculoma,18,no unambiguous correspondence to target classes
@@ -176,14 +175,11 @@ sd198,verruca_vulgaris,23,no unambiguous correspondence to target classes
 sd198,vitiligo,12,no unambiguous correspondence to target classes
 sd198,wound_infection,13,no unambiguous correspondence to target classes
 sd198,xerosis,38,no unambiguous correspondence to target classes
-skin_10classes,1. Eczema 1677,1677,no unambiguous correspondence to target classes
 skin_10classes,10. Warts Molluscum and other Viral Infections - 2103,2103,no unambiguous correspondence to target classes
 skin_10classes,2. Melanoma 15.75k,3140,no unambiguous correspondence to target classes
-skin_10classes,3. Atopic Dermatitis - 1.25k,1257,no unambiguous correspondence to target classes
 skin_10classes,4. Basal Cell Carcinoma (BCC) 3323,3323,no unambiguous correspondence to target classes
 skin_10classes,5. Melanocytic Nevi (NV) - 7970,7970,no unambiguous correspondence to target classes
 skin_10classes,6. Benign Keratosis-like Lesions (BKL) 2624,2079,no unambiguous correspondence to target classes
-skin_10classes,7. Psoriasis pictures Lichen Planus and related diseases - 2k,2055,no unambiguous correspondence to target classes
 skin_10classes,8. Seborrheic Keratoses and other Benign Tumors - 1.8k,1847,no unambiguous correspondence to target classes
 skin_10classes,9. Tinea Ringworm Candidiasis and other Fungal Infections - 1.7k,1702,no unambiguous correspondence to target classes
 skin_normal,dermatitis atopik,300,no unambiguous correspondence to target classes

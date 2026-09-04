@@ -19,7 +19,7 @@ Normal 298 | Psoriasis 527 | Tinea 330 | total 4,804.
 
 Usage:
     python datasets/build_external_unified.py \
-        --internal-dir datasets/final \
+        --internal-dir datasets/merged datasets/final \
         --raw-dir datasets/external_raw \
         --out-dir datasets/external_unified
 
@@ -64,39 +64,37 @@ KAGGLE_SOURCES = {
 
 SD198_HF_ID = "resyhgerwshshgdfghsdfgh/SD-198"  # 6,584 images, 198 labels
 
-# Kaggle sources: EXACT folder-name mapping (lowercased, spaces/underscores
-# normalized). A source folder not listed here is DISCARDED (and recorded).
+# Kaggle sources: REGEX matching on the normalized folder name (lowercase,
+# spaces/underscores/hyphens collapsed). Folder names on Kaggle carry
+# prefixes/counts (e.g. "1. Eczema 1677"), so exact matching is not enough.
+# First matching rule wins; an unmatched folder is DISCARDED (and recorded).
 # Mapping follows Appendix D: each source label -> at most one class.
-KAGGLE_LABEL_MAPPINGS: dict[str, dict[str, str]] = {
-    "acne_dataset": {
-        # single-condition repository -> Acne (essentially one-to-one)
-        "acne": "Acne",
-    },
-    "nail_disease": {
-        # only fungal nail disease maps; other nail conditions are discarded
-        "onychomycosis": "NailFungus",
-        "nail fungus": "NailFungus",
-        "fungal infection": "NailFungus",
-    },
-    "skin_normal": {
-        "normal": "Normal",
-        "normal skin": "Normal",
-    },
-    "skin_10classes": {
-        # per Appendix D this source contributes Eczema and Psoriasis only
-        "eczema": "Eczema",
-        "eczema photos": "Eczema",
-        "atopic dermatitis": "Eczema",
-        "atopic dermatitis photos": "Eczema",
-        "psoriasis": "Psoriasis",
-        "psoriasis pictures lichen planus and related diseases": "Psoriasis",
-    },
+KAGGLE_LABEL_PATTERNS: dict[str, list[tuple[str, str]]] = {
+    "acne_dataset": [
+        (r"acne", "Acne"),                 # single-condition repository
+    ],
+    "nail_disease": [
+        (r"onychomycosis|fung", "NailFungus"),  # "healthy"/"psoriasis" folders discarded
+    ],
+    "skin_normal": [
+        (r"^normal", "Normal"),            # dermatitis folders discarded
+    ],
+    "skin_10classes": [
+        (r"eczema", "Eczema"),             # "1. Eczema 1677"
+        (r"atopic dermatitis", "Eczema"),  # "3. Atopic Dermatitis - 1.25k"
+        (r"psoriasis", "Psoriasis"),       # "7. Psoriasis pictures Lichen Planus and related diseases - 2k"
+        # "9. Tinea Ringworm Candidiasis and other Fungal Infections" is a
+        # mixed folder and is deliberately NOT mapped (discarded).
+    ],
 }
 
 # SD-198: REGEX selection over the 198 fine-grained labels (normalized to
 # lowercase with spaces). First matching rule wins; a label matching no rule
 # is DISCARDED and recorded. Review the printed selection before building.
-INCLUDE_VERSICOLOR = False  # tinea versicolor is Malassezia, not dermatophyte
+# The original external set (Tinea = 330 = five tinea_* labels + tinea
+# versicolor) included versicolor, so it is kept by default for fidelity to
+# the evaluated set; set False to apply a strict dermatophyte-only criterion.
+INCLUDE_VERSICOLOR = True
 
 # Labels matching these substrings are never mapped (distinct clinical
 # entities that would otherwise match a broad pattern). Reviewable via
@@ -234,14 +232,22 @@ def collect_candidates(raw_dir: Path, sd198_dir: Path):
     candidates: dict[tuple[str, str, str], list[Path]] = defaultdict(list)
     discarded: Counter = Counter()
 
+    missing = [str(raw_dir / key) for key in KAGGLE_SOURCES if not (raw_dir / key).exists()]
+    if missing:
+        raise SystemExit(
+            "Kaggle source folder(s) not found:\n  " + "\n  ".join(missing) +
+            "\nExpected one sub-folder per source under --raw-dir "
+            f"({raw_dir.resolve()}): {', '.join(KAGGLE_SOURCES)}. "
+            "Run without --skip-download to fetch them, or point --raw-dir to the "
+            "folder where they were downloaded."
+        )
+
     for key in KAGGLE_SOURCES:
         src_dir = raw_dir / key
-        if not src_dir.exists():
-            logger.warning("Missing source dir: %s (skipped)", src_dir)
-            continue
-        mapping = {normalize_label(k): v for k, v in KAGGLE_LABEL_MAPPINGS[key].items()}
+        patterns = KAGGLE_LABEL_PATTERNS[key]
         for label, images in iter_label_dirs(src_dir):
-            cls = mapping.get(normalize_label(label))
+            norm = normalize_label(label)
+            cls = next((c for pat, c in patterns if re.search(pat, norm)), None)
             if cls is None:
                 discarded[(key, label)] += len(images)
             else:
@@ -263,8 +269,12 @@ def collect_candidates(raw_dir: Path, sd198_dir: Path):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="[R5b] Build unified external validation set")
-    parser.add_argument("--internal-dir", type=Path, required=True,
-                        help="Internal corpus root (train/val/test) for overlap removal")
+    parser.add_argument("--internal-dir", type=Path, nargs="+", required=True,
+                        help="One or more internal corpus roots to remove overlap against. "
+                             "Pass BOTH the raw merged corpus and the final split "
+                             "(e.g. datasets/merged datasets/final): the original build "
+                             "removed overlap against the raw sources, so comparing only "
+                             "against the deduplicated final corpus under-removes.")
     parser.add_argument("--raw-dir", type=Path, default=Path("datasets/external_raw"))
     parser.add_argument("--out-dir", type=Path, default=Path("datasets/external_unified"))
     parser.add_argument("--sd198-dir", type=Path, default=None,
@@ -307,14 +317,16 @@ def main() -> None:
         candidates[key] = kept
 
     # ---- Hash internal corpus ----
-    logger.info("Hashing internal corpus (train/val/test) for overlap removal...")
+    logger.info("Hashing internal corpus for overlap removal: %s", [str(d) for d in args.internal_dir])
     internal_hashes: list[str] = []
-    for img in args.internal_dir.rglob("*"):
-        if img.suffix.lower() in VALID_EXTENSIONS:
-            h = compute_dhash(img)
-            if h:
-                internal_hashes.append(h)
-    logger.info("Internal images hashed: %d", len(internal_hashes))
+    for root in args.internal_dir:
+        for img in root.rglob("*"):
+            if img.suffix.lower() in VALID_EXTENSIONS:
+                h = compute_dhash(img)
+                if h:
+                    internal_hashes.append(h)
+    internal_hashes = list(set(internal_hashes))
+    logger.info("Internal images hashed (unique): %d", len(internal_hashes))
 
     # Bucket internal hashes by 16-bit prefix for a cheap pre-filter
     def near_internal(h: str) -> bool:
@@ -378,6 +390,13 @@ def main() -> None:
     per_class: Counter = Counter()
     for (_, _, cls), imgs in retained.items():
         per_class[cls] += len(imgs)
+    per_source: Counter = Counter()
+    for (source, _, _), imgs in retained.items():
+        per_source[source] += len(imgs)
+    print("\n=== Retained images per source ===")
+    for source in list(KAGGLE_SOURCES) + ["sd198"]:
+        print(f"  {source:16s} {per_source[source]:6,d}")
+
     print("\n=== Final composition (vs paper, Appendix D) ===")
     for cls in PATHOVISION_CLASSES:
         got, exp = per_class[cls], expected[cls]
