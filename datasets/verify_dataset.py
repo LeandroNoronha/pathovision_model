@@ -13,17 +13,17 @@ import cv2
 TARGET_CLASSES = ["Acne", "Candidiasis", "Eczema", "NailFungus", "Normal", "Psoriasis", "Tinea"]
 VALID_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"}
 
-# Expected counts from the paper (Table F.5)
+# Expected counts from the paper (deduplicated corpus, stratified 80/10/10 split, seed 42)
 PAPER_COUNTS = {
-    "Acne":        {"train": 1301, "val": 132, "test": 377, "total": 1810},
-    "Candidiasis": {"train": 248,  "val": 96,  "test": 27,  "total": 371},
-    "Eczema":      {"train": 2017, "val": 228, "test": 421, "total": 2666},
-    "NailFungus":  {"train": 832,  "val": 208, "test": 261, "total": 1301},
-    "Normal":      {"train": 1526, "val": 120, "test": 189, "total": 1835},
-    "Psoriasis":   {"train": 2141, "val": 84,  "test": 440, "total": 2665},
-    "Tinea":       {"train": 815,  "val": 108, "test": 102, "total": 1025},
+    "Acne":        {"train": 924,  "val": 115, "test": 116, "total": 1155},
+    "Candidiasis": {"train": 202,  "val": 25,  "test": 26,  "total": 253},
+    "Eczema":      {"train": 1333, "val": 166, "test": 168, "total": 1667},
+    "NailFungus":  {"train": 1000, "val": 125, "test": 126, "total": 1251},
+    "Normal":      {"train": 1465, "val": 183, "test": 184, "total": 1832},
+    "Psoriasis":   {"train": 1346, "val": 168, "test": 169, "total": 1683},
+    "Tinea":       {"train": 1108, "val": 138, "test": 140, "total": 1386},
 }
-PAPER_TOTAL = 11673
+PAPER_TOTAL = 9227
 
 
 def count_images(dataset_dir: Path) -> dict[str, dict[str, int]]:

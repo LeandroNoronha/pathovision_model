@@ -25,8 +25,9 @@ Usage:
 
 Run with --dry-run first to review the SD-198 label selection (the script
 prints kept and discarded labels; adjust the CONFIG section if needed).
-"versicolor" labels are excluded by default (Malassezia, not dermatophyte);
-set INCLUDE_VERSICOLOR = True to include them.
+"versicolor" labels (tinea versicolor, Malassezia) are INCLUDED by default
+(INCLUDE_VERSICOLOR = True), matching the external set used in the paper;
+set INCLUDE_VERSICOLOR = False to exclude them.
 
 Requires: kaggle CLI configured; `pip install datasets pillow` for SD-198.
 """

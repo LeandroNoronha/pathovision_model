@@ -106,7 +106,8 @@ def find_duplicates(
     Args:
         dataset_dir: Root directory of the merged dataset.
         method: 'md5' for exact duplicates, 'dhash' for perceptual.
-        threshold: Hamming distance threshold for dhash (lower = stricter).
+        threshold: Reserved for near-duplicate matching; the current implementation
+            groups images by identical hash only (Hamming distance 0), as used in the paper.
 
     Returns:
         Dictionary with duplicate analysis results.
@@ -288,7 +289,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="[R8] Detect (and optionally delete) duplicates")
     parser.add_argument("--dataset-dir", type=str, default="datasets/merged")
     parser.add_argument("--method", choices=["md5", "dhash"], default="dhash")
-    parser.add_argument("--threshold", type=int, default=10)
+    parser.add_argument("--threshold", type=int, default=10,
+                        help="Reserved; identical-hash matching is always used.")
     parser.add_argument("--analyze-normal", action="store_true", help="Analyze Normal class artifacts")
     parser.add_argument("--output-dir", type=str, default="results/01_dataset_qc")
     parser.add_argument(
