@@ -7,7 +7,7 @@ The project develops a leakage-aware, externally validated benchmark for automat
 
 The evolution of this project has generated different versions of the classifier:
 
-- **v1.0.0.0 (Stable)**
+- **v2.0.0 (Stable; `CITATION.cff` version)**
   - PathoVision v2: complete rewrite of the pipeline
   - Multi-architecture comparison (EfficientNetB2 baseline, EfficientNetV2-S, Swin-Tiny, ConvNeXt-Tiny) under balanced and unbalanced training
   - Dataset cleaning pipeline (9,227 images after perceptual-hash deduplication)
@@ -91,9 +91,11 @@ Model IDs follow the paper. The table maps each ID to its training configuration
 | M4b | ConvNeXt-Tiny | none | `configs/convnext_tiny_nobal.yaml` |
 | M4 | ConvNeXt-Tiny | focal loss + balanced sampling | `configs/convnext_tiny.yaml` |
 | H1 | Random forest on M4 embeddings | – | `scripts/train_hybrid.py` |
-| M6 | Soft-voting ensemble of M2 + M3 + M4 | – | `scripts/evaluate.py` |
+| M6 | Soft-voting ensemble of M2 + M3 + M4 | – | `src/hybrid/ensemble.py` (see `reproduction/scripts/generate_evidence.py` for the M2 + M3 + M4 soft vote) |
 
 `configs/dinov2_vit.yaml` is an exploratory configuration not used in the paper.
+
+Note on the unbalanced variants: `improved_nobal.yaml`, `swin_tiny_nobal.yaml` and `convnext_tiny_nobal.yaml` follow the legacy EfficientNetB2 recipe (Adam 1e-4, no weight decay, plain cross-entropy, ReduceLROnPlateau, 50 epochs without early stopping, base augmentation only), not the AdamW/cosine/focal recipe of M2, M3 and M4. The paper describes this in Section 4.6 and in its Limitations section. The `cosine_warmup` scheduler in `scripts/train.py` is a plain `CosineAnnealingLR` (no warm-up phase), and the `random_erasing` entry of `improved.yaml` is not applied by `src/data/transforms.py`.
 
 ## Quick Start
 
@@ -132,7 +134,7 @@ python scripts/train.py --config configs/base.yaml            # M1 (baseline)
 
 ### Evaluation, cross-validation and analyses
 ```bash
-python scripts/evaluate.py            # test-set metrics and ensemble
+python scripts/evaluate.py            # test-set metrics for one checkpoint
 python scripts/cross_validate.py      # five-fold stratified cross-validation
 python scripts/fairness_analysis.py   # ITA skin-tone stratification
 python scripts/gradcam_demo.py        # Grad-CAM
@@ -199,7 +201,7 @@ Owing to dataset-version and stochastic differences, the re-execution retained 9
 | M2 | Swin-Tiny | M3 | 86.62% | 2.98 h |
 | M3 | ConvNeXt-Tiny | M4 | 89.43% | 0.93 h |
 | M4 | EfficientNetV2-S | M2 | 84.14% | 2.67 h |
-| M4bal | EfficientNetB2 (balanced) | M1b / M5 | 80.04% | 7.25 h |
+| M4bal | EfficientNetB2 (focal loss + balanced sampling, `configs/balanced.yaml`) | M5 | 80.04% | 7.25 h |
 | M6 | Ensemble (Swin + ConvNeXt + EfficientNetV2-S) | M6 | 89.21% | – |
 
 Key finding of the reproduction: the re-trained ConvNeXt-Tiny (89.43%) marginally outperformed the re-trained ensemble (89.21%). A paired McNemar test on the shared per-sample predictions (927 images; 13 vs. 11 discordant pairs) found no significant difference between them (continuity-corrected χ² = 0.04, p = 0.84), which is the result reported in the paper. The `reproduction/evidence/reports/mcnemar_test.txt` file additionally reports the ensemble against the re-trained EfficientNetV2-S (χ² = 25.49, p < 0.0001); that comparison is not the one discussed in the paper.
