@@ -1,6 +1,6 @@
 # Original-run results
 
-Output files of the training and evaluation runs reported in the paper (second PathoVision iteration, cluster runs with seed 42). Every number in the paper's internal, cross-validation, external, skin-tone and efficiency tables can be traced to these files. The independent re-execution on consumer hardware is documented separately in `reproduction/`.
+Output files of the training and evaluation runs reported in the paper (second PathoVision iteration, cluster runs with seed 42). The per-model internal results (Table 6, rows M1 to M4b), the M1 cross-validation (Table 12), the external accuracies (Table 7), the skin-tone stratification (Table 10) and the dataset audit (Section 5.2) can be traced to these files; the hybrid (H1), ensemble (M6), M4 cross-validation, external per-class and efficiency figures come from run outputs that were not retained as files. The independent re-execution on consumer hardware is documented separately in `reproduction/`.
 
 | Folder | Contents | Paper |
 |---|---|---|
@@ -18,4 +18,4 @@ Output files of the training and evaluation runs reported in the paper (second P
 
 Each model folder contains the normalized and absolute confusion matrices, the ROC and PR curves, the per-class metrics (`*_per_class.csv`), a LaTeX table and a `*_comparison.csv` that lists the per-class F1 next to the first-iteration paper values.
 
-Notes. The ITA values in `07_fairness/` are on the 8-bit OpenCV CIELab scale described in the paper (Section 4.13); the stratum labels are nominal. Per-sample prediction files of these runs were not retained, which is why the paper reports paired tests only for the re-execution in `reproduction/`. Grad-CAM panels of individual test photographs are not redistributed here because they contain the source images; the four examples shown in the paper are reproduced under the source repositories' research-use terms.
+Notes. The per-class CSVs are the authoritative source of the internal metrics; the `Int Acc`/`Int F1` columns of `08_external_validation/unified_external_validation.csv` were copied from an interim summary and differ for M2 (86.65 vs. 83.85 from the per-class file) and M3 (85.47 vs. 85.36). The ITA values in `07_fairness/` are on the 8-bit OpenCV CIELab scale described in the paper (Section 4.13); the stratum labels are nominal. Per-sample prediction files of these runs were not retained, which is why the paper reports paired tests only for the re-execution in `reproduction/`. Grad-CAM panels of individual test photographs are not redistributed here because they contain the source images; the four examples shown in the paper are reproduced under the source repositories' research-use terms.
