@@ -57,7 +57,7 @@ PathoVision v2 compares one legacy baseline (EfficientNetB2) and three modern ba
 - Sources: Human Skin Diseases (Kaggle) + DermNet (Kaggle)
 - Classes: 7 dermatological conditions (Acne, Candidiasis, Eczema, NailFungus, Normal, Psoriasis, Tinea)
 - Final dataset: 9,227 images (7,378 train / 920 val / 929 test), stratified 80/10/10 split, seed 42
-- Duplicate removal: dHash (difference hash, perceptual) deduplication removed exact and near-duplicate images and 1,017 train–test leakage groups
+- Duplicate removal: dHash (difference hash, perceptual) deduplication removed 4,071 exact and near-duplicate images (4,867 duplicate pairs, of which 1,873 linked different partitions of the inherited split; see `results/original_run/01_dataset_qc/`)
 
 **External Validation Dataset:**
 - 4,804 images from four Kaggle repositories (Acne Dataset; Nail Disease Image Classification; Skin Disease and Normal Skin; Skin Diseases Image Dataset) plus SD-198 (HuggingFace)
@@ -176,7 +176,7 @@ Held-out internal test set of 929 images (stratified 80/10/10 split of the 9,227
 | M1b | EfficientNetB2 + CE + balanced | 85.36 | 85.31 |
 | M5 | EfficientNetB2 + focal + balanced | 82.45 | 82.28 |
 | M2b | EfficientNetV2-S | 84.39 | 84.29 |
-| M2 | EfficientNetV2-S + focal + balanced | 86.65 | 86.57 |
+| M2 | EfficientNetV2-S + focal + balanced | 83.85 | 83.80 |
 | M3b | Swin-Tiny | 86.22 | 86.18 |
 | M3 | Swin-Tiny + focal + balanced | 85.36 | 85.31 |
 | M4b | ConvNeXt-Tiny | 87.73 | 87.68 |
