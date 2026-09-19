@@ -45,7 +45,7 @@ Output: `datasets/merged/`
 python datasets/detect_duplicates2.py --dataset-dir datasets/merged
 ```
 
-Uses a 256-bit difference hash (dHash, 17x16 grayscale grid; identical hashes are treated as duplicates) to identify duplicate images, including cross-split leakage (the same image appearing in different partitions). On the merged corpus this removes 4,071 duplicates, including 1,017 cross-split duplicate pairs, leaving 9,227 unique images. The duplicate-pair records (`duplicate_pairs.txt`) and the QC report are written to `results/01_dataset_qc/`. `detect_duplicates.py` is the first-iteration script and is kept for reference only.
+Uses a 256-bit difference hash (dHash, 17x16 grayscale grid; identical hashes are treated as duplicates) to identify duplicate images, including cross-split leakage (the same image appearing in different partitions). On the merged corpus this removes 4,071 duplicates (4,867 duplicate pairs, of which 1,873 linked images placed in different partitions of the inherited split), leaving 9,227 unique images. The duplicate-pair records (`duplicate_pairs.txt`) and the QC report are written to `results/01_dataset_qc/`; the records of the original run are released in `results/original_run/01_dataset_qc/`. `detect_duplicates.py` is the first-iteration script and is kept for reference only.
 
 ### 4. Verify dataset integrity
 
