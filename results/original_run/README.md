@@ -12,7 +12,7 @@ Output files of the training and evaluation runs reported in the paper (second P
 | `03_m3_swin_balanced/`, `03_m3b_swin_nobal/` | M3 / M3b, Swin-Tiny | Table 6 |
 | `03_m4_convnext_balanced/`, `03_m4b_convnext_nobal/` | M4 / M4b, ConvNeXt-Tiny. The confusion matrix, ROC and PR curves of M4 are the paper's Figures 3 to 5 | Table 6, Figures 3 to 5 |
 | `04_cross_validation/` | Five-fold stratified cross-validation of the baseline M1 (mean, standard deviation and 95% CI per metric) | Table 12 |
-| `05_ablation/` | Best-validation accuracy, loss and epoch of every training run (one row per model, plus the five M1 folds); the source of the convergence epochs quoted in Section 4.6 | Section 4.6 |
+| `05_ablation/` | Best-validation accuracy, loss and epoch of every training run (one row per model, plus the five M1 folds); the source of the convergence epochs quoted in Section 4.6. The `ce_loss_only_(no_weights)` row and the table caption come from a preliminary single-factor run that is not reported in the paper | Section 4.6 |
 | `07_fairness/` | Image-level ITA estimates of the 929 test images (`skin_tone_annotations.csv`), the accuracy per stratum (`fairness_metrics.csv`) and the corresponding plots | Table 10, Section 5.8 |
 | `08_external_validation/` | Internal versus external accuracy and weighted F1 of all nine end-to-end models on the 4,804-image external set (`unified_external_validation.csv`) | Table 7 |
 
