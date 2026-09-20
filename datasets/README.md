@@ -4,9 +4,9 @@
 
 This project uses two publicly available datasets from Kaggle:
 
-1. **Human Skin Diseases -- A Complete Dataset**
+1. **Human Skin Diseases (Image)**
    - Author: Youssef Mohamed
-   - URL: https://www.kaggle.com/datasets/youssefmohmmed/human-skin-diseases-a-complete-dataset
+   - URL: https://www.kaggle.com/datasets/youssefmohmmed/human-skin-diseases-image
    - Contains clinical images of multiple skin conditions
 
 2. **Dermnet**
