@@ -1,32 +1,11 @@
 # Tests
 
-This directory contains unit and integration tests for the PathoVision v2 codebase.
+The test suite of the main pipeline has not been released yet; this directory is kept as a placeholder.
 
-## Running Tests
+The tests that currently ship with the repository cover the independent re-execution package and live in `reproduction/tests/`:
 
 ```bash
-# Run all tests
-python -m pytest tests/
-
-# Run with verbose output
-python -m pytest tests/ -v
-
-# Run a specific test file
-python -m pytest tests/test_models.py
+python -m pytest reproduction/tests/ -v
 ```
 
-## Test Coverage
-
-Tests cover:
-
-- **Data pipeline**: Dataset loading, transforms, augmentation correctness, sampler behavior
-- **Models**: Forward pass shapes, feature extraction, checkpoint save/load, head configurations
-- **Training**: Loss computation, gradient accumulation, mixed precision, callback triggers
-- **Evaluation**: Metric computation, confusion matrix generation, report formatting
-- **Hybrid pipeline**: Feature extraction dimensions, classical ML classifier fitting
-
-## Notes
-
-- Tests that require GPU are skipped automatically when no CUDA device is available
-- Tests that require dataset files are skipped if `datasets/data/` is not present
-- Use `pytest -m "not slow"` to skip long-running integration tests
+They check the evidence generator (`reproduction/scripts/generate_evidence.py`) and the figure generator (`reproduction/scripts/generate_all_figures.py`).
