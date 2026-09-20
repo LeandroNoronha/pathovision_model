@@ -8,6 +8,7 @@ The project develops a leakage-aware, externally validated benchmark for automat
 The evolution of this project has generated different versions of the classifier:
 
 - **v2.1.0 (Stable; `CITATION.cff` version; release accompanying the manuscript)**
+  - Note: the older Git tags `v1.0.0`, `v2.0.0`, `v3.0.0` and `v4.0.0` (2025) mark the first-iteration prototype and predate this pipeline; `v1.0.0.0` (April 2026) is an intermediate snapshot. Use `v2.1.0`.
   - PathoVision v2: complete rewrite of the pipeline
   - Multi-architecture comparison (EfficientNetB2 baseline, EfficientNetV2-S, Swin-Tiny, ConvNeXt-Tiny) under balanced and unbalanced training
   - Dataset cleaning pipeline (9,227 images after perceptual-hash deduplication)
@@ -47,10 +48,10 @@ PathoVision v2 compares one legacy baseline (EfficientNetB2) and three modern ba
 **Key Features:**
 - **Dataset Pipeline**: automated download, class mapping, perceptual-hash (dHash) duplicate and leakage detection, stratified splitting, and validation
 - **Multi-Architecture**: EfficientNetB2, EfficientNetV2-S, Swin-Tiny, ConvNeXt-Tiny, hybrid CNN + random forest, and a soft-voting ensemble
-- **External Validation**: zero-shot evaluation on 4,804 images from five independent public sources
+- **External Validation**: zero-shot evaluation on 4,804 images from five heterogeneous public sources disjoint from the training data
 - **Explainability**: Grad-CAM analysis for model interpretability
 - **Skin-Tone-Stratified Performance Analysis**: image-level ITA stratification (exploratory; not a fairness or equity assessment)
-- **Testing**: test suite with pytest
+- **Testing**: pytest tests for the reproduction evidence and figure generators (`reproduction/tests/`)
 - **Tooling**: Ruff linting/formatting, type hints, reproducible YAML configurations
 
 **Internal Dataset:**
@@ -72,7 +73,7 @@ PathoVision v2 compares one legacy baseline (EfficientNetB2) and three modern ba
 - `configs/` - YAML training configurations for every model of the paper
 - `datasets/` - Dataset download, organization, deduplication, external-set construction, and verification tools
 - `datasets/external_unified/` - Label-level curation metadata of the external validation set (`external_label_mapping.csv`, `external_discarded_labels.csv`, `external_manifest.csv`)
-- `tests/` - Test suite with pytest
+- `tests/` - Placeholder for the main-pipeline test suite (the current tests live in `reproduction/tests/`)
 - `reproduction/` - Independent re-execution of the training pipeline (see "Independent reproduction" below): its own scripts, configs and evidence package (`reproduction/evidence/`)
 
 ## Model identifiers
