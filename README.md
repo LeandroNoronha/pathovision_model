@@ -1,19 +1,19 @@
 # PathoVision: Multi-Architecture Deep Learning for Dermatological Image Classification
 
 This repository contains the complete implementation and research materials for the PathoVision article (second iteration of the framework).
-The project develops a leakage-aware, externally validated benchmark for automated classification of seven common non-neoplastic dermatological conditions from clinical photographs, with emphasis on data curation, class-balancing analysis, external validation, explainability, and an exploratory skin-tone fairness evaluation.
+The project develops a leakage-aware, externally validated benchmark for automated classification of seven common non-neoplastic dermatological conditions from clinical photographs, with emphasis on data curation, class-balancing analysis, external validation, explainability, and an exploratory skin-tone-stratified performance analysis.
 
 ## Versioning
 
 The evolution of this project has generated different versions of the classifier:
 
-- **v2.0.0 (Stable; `CITATION.cff` version)**
+- **v2.1.0 (Stable; `CITATION.cff` version; release accompanying the manuscript)**
   - PathoVision v2: complete rewrite of the pipeline
   - Multi-architecture comparison (EfficientNetB2 baseline, EfficientNetV2-S, Swin-Tiny, ConvNeXt-Tiny) under balanced and unbalanced training
   - Dataset cleaning pipeline (9,227 images after perceptual-hash deduplication)
-  - External validation on 4,804 independent images (four Kaggle sources + SD-198)
+  - External validation on 4,804 images from five heterogeneous public sources (four Kaggle sources + SD-198)
   - Explainability with Grad-CAM analysis
-  - Fairness evaluation with ITA skin-tone stratification
+  - Exploratory skin-tone-stratified performance analysis (image-level ITA)
   - Recommended version for use.
 
 - **v0.4.0.0 (Stable_old)**
@@ -37,7 +37,7 @@ The evolution of this project has generated different versions of the classifier
 To check out the stable release, run:
 
 ```bash
-git checkout tags/v1.0.0.0
+git checkout tags/v2.1.0
 ```
 
 ## PathoVision v2 Overview
@@ -49,7 +49,7 @@ PathoVision v2 compares one legacy baseline (EfficientNetB2) and three modern ba
 - **Multi-Architecture**: EfficientNetB2, EfficientNetV2-S, Swin-Tiny, ConvNeXt-Tiny, hybrid CNN + random forest, and a soft-voting ensemble
 - **External Validation**: zero-shot evaluation on 4,804 images from five independent public sources
 - **Explainability**: Grad-CAM analysis for model interpretability
-- **Fairness Evaluation**: image-level ITA skin-tone stratification
+- **Skin-Tone-Stratified Performance Analysis**: image-level ITA stratification (exploratory; not a fairness or equity assessment)
 - **Testing**: test suite with pytest
 - **Tooling**: Ruff linting/formatting, type hints, reproducible YAML configurations
 
@@ -68,7 +68,7 @@ PathoVision v2 compares one legacy baseline (EfficientNetB2) and three modern ba
 ## Repository Structure
 
 - `src/` - Core library code (data, models, training, evaluation)
-- `scripts/` - Experiment scripts (training, evaluation, cross-validation, external validation, Grad-CAM, fairness, efficiency, hybrid model)
+- `scripts/` - Experiment scripts (training, evaluation, cross-validation, external validation, Grad-CAM, skin-tone stratification, efficiency, hybrid model)
 - `configs/` - YAML training configurations for every model of the paper
 - `datasets/` - Dataset download, organization, deduplication, external-set construction, and verification tools
 - `datasets/external_unified/` - Label-level curation metadata of the external validation set (`external_label_mapping.csv`, `external_discarded_labels.csv`, `external_manifest.csv`)
@@ -168,7 +168,7 @@ Note: the public sources change upstream over time, so re-executing the builder 
 
 ## Experimental Results (paper)
 
-Held-out internal test set of 929 images (stratified 80/10/10 split of the 9,227-image corpus, seed 42). Full per-class results, confidence intervals, cross-validation, external validation and fairness analyses are reported in the paper.
+Held-out internal test set of 929 images (stratified 80/10/10 split of the 9,227-image corpus, seed 42). Full per-class results, confidence intervals, cross-validation, external validation and skin-tone-stratified analyses are reported in the paper.
 
 | ID | Model | Accuracy (%) | Weighted F1 (%) |
 |---|---|---|---|
@@ -222,7 +222,7 @@ If you use this work, please cite:
   title={PathoVision v2: Multi-Architecture Deep Learning for Dermatological Image Classification},
   author={Noronha da Silva, Leandro and Roehrs, Alex and da Costa, Cristiano Andre and Lima, Kevin and Py, Monica Xavier and Moralles, Cassiano Ricardo Neubauer and da Costa, Luis Antonio L. F. and Rigo, Sandro J. and Schmidt, Douglas C. and Zhou, Gang},
   year={2026},
-  version={1.0.0.0},
+  version={2.1.0},
   affiliation={Universidade do Vale do Rio dos Sinos (Unisinos)}
 }
 ```
