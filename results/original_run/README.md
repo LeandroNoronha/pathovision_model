@@ -1,20 +1,20 @@
 # Original-run results
 
-Output files of the training and evaluation runs reported in the paper (second PathoVision iteration, cluster runs with seed 42). The per-model internal results (Table 4, rows M1 to M4b), the M1 cross-validation (Table 9), the external accuracies (Table 5), the skin-tone stratification (Table 7) and the dataset audit (Section 4.2) can be traced to these files; the hybrid (H1), ensemble (M6), M4 cross-validation, external per-class and efficiency figures come from run outputs that were not retained as files. The independent re-execution on consumer hardware is documented separately in `reproduction/`.
+Output files of the training and evaluation runs reported in the paper (second PathoVision iteration, cluster runs with seed 42). The per-model internal results (Table 2, rows M1 to M4b), the M1 cross-validation (Online Resource 1, Table S6), the external accuracies (Table 3), the skin-tone stratification (Table 5) and the dataset audit (Section 4.2) can be traced to these files; the hybrid (H1), ensemble (M6), M4 cross-validation, external per-class and efficiency figures come from run outputs that were not retained as files. The independent re-execution on consumer hardware is documented separately in `reproduction/`.
 
 | Folder | Contents | Paper |
 |---|---|---|
 | `01_dataset_qc/` | dHash duplicate audit of the merged 13,298-image corpus: `dataset_qc_report.json` (summary and per-class brightness statistics) and `duplicate_pairs.txt` (every duplicate pair found, with the inherited partition of each copy) | Sections 3.2.2 and 4.2 |
-| `02_baseline/` | M1, EfficientNetB2, cross-entropy, unbalanced | Table 4 |
-| `02b_baseline_balanced/` | M1b, EfficientNetB2, cross-entropy + balanced sampling | Table 4 |
-| `05_focal_balanced/` | M5, EfficientNetB2, focal loss + balanced sampling | Table 4 |
-| `03_m2_v2s_balanced/`, `03_m2b_v2s_nobal/` | M2 / M2b, EfficientNetV2-S | Table 4 |
-| `03_m3_swin_balanced/`, `03_m3b_swin_nobal/` | M3 / M3b, Swin-Tiny | Table 4 |
-| `03_m4_convnext_balanced/`, `03_m4b_convnext_nobal/` | M4 / M4b, ConvNeXt-Tiny. The confusion matrix of M4 is the paper's Figure 3, and its ROC and PR curves form Figure 4 | Table 4, Figures 3 and 4 |
-| `04_cross_validation/` | Five-fold stratified cross-validation of the baseline M1 (mean, standard deviation and 95% CI per metric) | Table 9 |
+| `02_baseline/` | M1, EfficientNetB2, cross-entropy, unbalanced | Table 2 |
+| `02b_baseline_balanced/` | M1b, EfficientNetB2, cross-entropy + balanced sampling | Table 2 |
+| `05_focal_balanced/` | M5, EfficientNetB2, focal loss + balanced sampling | Table 2 |
+| `03_m2_v2s_balanced/`, `03_m2b_v2s_nobal/` | M2 / M2b, EfficientNetV2-S | Table 2 |
+| `03_m3_swin_balanced/`, `03_m3b_swin_nobal/` | M3 / M3b, Swin-Tiny | Table 2 |
+| `03_m4_convnext_balanced/`, `03_m4b_convnext_nobal/` | M4 / M4b, ConvNeXt-Tiny. The confusion matrix of M4 is the paper's Figure 3, and its ROC and PR curves form Figure 4 | Table 2, Figures 3 and 4 |
+| `04_cross_validation/` | Five-fold stratified cross-validation of the baseline M1 (mean, standard deviation and 95% CI per metric) | Online Resource 1, Table S6 |
 | `05_ablation/` | Best-validation accuracy, loss and epoch of every training run (one row per model, plus the five M1 folds); the source of the convergence epochs quoted in Section 3.5. The `ce_loss_only_(no_weights)` row and the table caption come from a preliminary single-factor run that is not reported in the paper | Section 3.5 |
-| `07_fairness/` | Image-level ITA estimates of the 929 test images (`skin_tone_annotations.csv`), the accuracy per stratum (`fairness_metrics.csv`) and the corresponding plots | Table 7, Section 4.7 |
-| `08_external_validation/` | Internal versus external accuracy and weighted F1 of all nine end-to-end models on the 4,804-image external set (`unified_external_validation.csv`) | Table 5 |
+| `07_fairness/` | Image-level ITA estimates of the 929 test images (`skin_tone_annotations.csv`), the accuracy per stratum (`fairness_metrics.csv`) and the corresponding plots | Table 5, Section 4.7 |
+| `08_external_validation/` | Internal versus external accuracy and weighted F1 of all nine end-to-end models on the 4,804-image external set (`unified_external_validation.csv`) | Table 3 |
 
 Each model folder contains the normalized and absolute confusion matrices, the ROC and PR curves, the per-class metrics (`*_per_class.csv`), a LaTeX table and a `*_comparison.csv` that lists the per-class F1 next to the first-iteration paper values.
 
