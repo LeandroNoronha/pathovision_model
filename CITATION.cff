@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "PathoVision v2: Multi-Architecture Deep Learning for Dermatological Image Classification"
-version: "2.1.0"
-date-released: "2026-09-20"
+version: "2.2.0"
+date-released: "2026-11-06"
 authors:
   - family-names: "Noronha da Silva"
     given-names: "Leandro"

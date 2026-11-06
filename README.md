@@ -7,8 +7,9 @@ The project develops a leakage-aware, externally validated benchmark for automat
 
 The evolution of this project has generated different versions of the classifier:
 
-- **v2.1.0 (Stable; `CITATION.cff` version; release accompanying the manuscript)**
-  - Note: the older Git tags `v1.0.0`, `v2.0.0`, `v3.0.0` and `v4.0.0` (2025) mark the first-iteration prototype and predate this pipeline; `v1.0.0.0` (April 2026) is an intermediate snapshot. Use `v2.1.0`.
+- **v2.2.0 (Stable; `CITATION.cff` version; release accompanying the manuscript)**
+  - Documentation-only update of `v2.1.0`: cross-references to the paper renumbered to the current manuscript; code, configurations and results are identical to `v2.1.0`.
+  - Note: the older Git tags `v1.0.0`, `v2.0.0`, `v3.0.0` and `v4.0.0` (2025) mark the first-iteration prototype and predate this pipeline; `v1.0.0.0` (April 2026) is an intermediate snapshot. Use `v2.2.0`.
   - PathoVision v2: complete rewrite of the pipeline
   - Multi-architecture comparison (EfficientNetB2 baseline, EfficientNetV2-S, Swin-Tiny, ConvNeXt-Tiny) under balanced and unbalanced training
   - Dataset cleaning pipeline (9,227 images after perceptual-hash deduplication)
@@ -38,7 +39,7 @@ The evolution of this project has generated different versions of the classifier
 To check out the stable release, run:
 
 ```bash
-git checkout tags/v2.1.0
+git checkout tags/v2.2.0
 ```
 
 ## PathoVision v2 Overview
@@ -96,7 +97,7 @@ Model IDs follow the paper. The table maps each ID to its training configuration
 
 `configs/dinov2_vit.yaml` is an exploratory configuration not used in the paper.
 
-Note on the unbalanced variants: `improved_nobal.yaml`, `swin_tiny_nobal.yaml` and `convnext_tiny_nobal.yaml` follow the legacy EfficientNetB2 recipe (Adam 1e-4, no weight decay, plain cross-entropy, ReduceLROnPlateau, 50 epochs without early stopping, base augmentation only), not the AdamW/cosine/focal recipe of M2, M3 and M4. The paper describes this in Section 4.6 and in its Limitations section. The `cosine_warmup` scheduler in `scripts/train.py` is a plain `CosineAnnealingLR` (no warm-up phase), and the `random_erasing` entry of `improved.yaml` is not applied by `src/data/transforms.py`.
+Note on the unbalanced variants: `improved_nobal.yaml`, `swin_tiny_nobal.yaml` and `convnext_tiny_nobal.yaml` follow the legacy EfficientNetB2 recipe (Adam 1e-4, no weight decay, plain cross-entropy, ReduceLROnPlateau, 50 epochs without early stopping, base augmentation only), not the AdamW/cosine/focal recipe of M2, M3 and M4. The paper describes this in Section 3.5 and in its Limitations section. The `cosine_warmup` scheduler in `scripts/train.py` is a plain `CosineAnnealingLR` (no warm-up phase), and the `random_erasing` entry of `improved.yaml` is not applied by `src/data/transforms.py`.
 
 ## Quick Start
 
@@ -223,7 +224,7 @@ If you use this work, please cite:
   title={PathoVision v2: Multi-Architecture Deep Learning for Dermatological Image Classification},
   author={Noronha da Silva, Leandro and Roehrs, Alex and da Costa, Cristiano Andre and Lima, Kevin and Py, Monica Xavier and Moralles, Cassiano Ricardo Neubauer and da Costa, Luis Antonio L. F. and Rigo, Sandro J. and Schmidt, Douglas C. and Zhou, Gang},
   year={2026},
-  version={2.1.0},
+  version={2.2.0},
   affiliation={Universidade do Vale do Rio dos Sinos (Unisinos)}
 }
 ```
