@@ -4,7 +4,7 @@ This script validates the M4 (EfficientNetV2-S Improved) model on the
 unified external validation dataset (4,804 images from 4 Kaggle sources + SD-198).
 
 Unlike scripts/external_validation.py_old (which maps Fitzpatrick17k + PAD-UFES-20),
-this script uses the sources documented in Appendix D of AIIM_PathoVision_v5:
+this script uses the sources documented in Online Resource 1 (Table S3) of the paper:
 - 4 Kaggle sources: acne_dataset, nail_disease, skin_normal, skin_10classes
 - 1 HuggingFace source: SD-198 (with REGEX label mapping)
 
